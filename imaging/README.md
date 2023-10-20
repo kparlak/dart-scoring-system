@@ -1,4 +1,4 @@
-# Imaging System
+# Imaging
 ## Dependencies
 - [jetson-inference](https://github.com/dusty-nv/jetson-inference/tree/master)
 ## Installation
