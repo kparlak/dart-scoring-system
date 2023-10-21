@@ -71,6 +71,7 @@ def wait_throw():
             break
         time.sleep(1)
 
+# TODO : pixel_x, pixel_y = find_dart_state
 def find_dart():
     print("FIND DART State")
     while True:
@@ -87,14 +88,17 @@ def find_dart():
                 pixel_y = detection.Bottom
                 return pixel_x, pixel_y
 
+# TODO : map_dart_state(pixel_x, pixel_y, conn)
 def map_dart(x, y):
     print("MAP DART State")
+    # TODO : x, y = translate_location(pixel_x, pixel_y)
     x_loc = x
     # Translate y location due to projection geometry
     p0 = center_y
     dy = p0 / d0 * y
     y_loc = dy - d0
 
+    # TODO : ring = map_ring(x, y, x0, y0)
     r = math.sqrt(math.pow((x_loc - center_x), 2) + math.pow((y_loc - center_y), 2))
 
 
@@ -116,6 +120,7 @@ def map_dart(x, y):
         print("Z")
 
     # Map number hit
+    # TODO : number = map_number(x, y, x0, y0)
     quad_x = x_loc - center_x
     quad_y = y - center_y
 
@@ -189,6 +194,7 @@ def main():
 
     pixel_x, pixel_y = find_dart()
 
+    # Map dart state
     map_dart(x=pixel_x, y=pixel_y)
 
     print("Done")
