@@ -1,3 +1,6 @@
+import sys
+sys.path.append("..")
+#import constants
 from jetson_inference import detectNet
 from jetson_utils import videoSource, videoOutput
 

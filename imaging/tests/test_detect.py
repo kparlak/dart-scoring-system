@@ -2,30 +2,22 @@
 
 import sys
 sys.path.append("..")
-from jetson_inference import detectNet
-from jetson_utils import videoSource, videoOutput
+from jetson_utils import videoOutput
 
-camera = videoSource('/dev/video0')
-display = videoOutput("display://0")
+import imaging_constants as ic
 
-dir = "/home/kevin/Documents/jetson-inference/python/training/detection/ssd/models/darts/base"
+DISPLAY = videoOutput("display://0")
 
-net = detectNet(argv=["--model=" + dir + "/ssd-mobilenet.onnx",
-                      "--labels=" + dir + "/labels.txt",
-                      "--input-blob=input_0",
-                      "--output-cvg=scores",
-                      "--output-bbox=boxes"], threshold=0.5)
+while DISPLAY.IsStreaming():
+    img = ic.CAMERA.Capture()
 
-while display.IsStreaming():
-    img = camera.Capture()
-
-    if img is None: # capture timeout
+    if img is None:
         continue
 
-    detections = net.Detect(img)
+    detections = ic.NETWORK.Detect(img)
     
-    display.Render(img)
-    display.SetStatus("Object Detection | Network {:.0f} FPS".format(net.GetNetworkFPS()))
+    DISPLAY.Render(img)
+    DISPLAY.SetStatus("Object Detection | Network {:.0f} FPS".format(ic.NETWORK.GetNetworkFPS()))
 
     for detection in detections:
         if detection.ClassID == 1:  # Bull

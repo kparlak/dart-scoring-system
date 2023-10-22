@@ -9,8 +9,8 @@ import time
 import math
 from jetson_inference import detectNet
 from jetson_utils import videoSource
-
-#from idle_start import idle_start
+import pickle
+import struct
 
 d0 = 431.8  # mm
 
@@ -19,31 +19,26 @@ server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 # Connect to scoring system
 server_address = (constants.IMAGING_IP_ADDRESS, constants.PORT)
 server.bind(server_address)
-
 server.listen(1)  # One connection allowed
 print("Waiting for scoring system to connect...")
 client, address = server.accept()
 
 
-camera = videoSource('/dev/video0')
+CAMERA = videoSource('/dev/video0')
 
-dir = "/home/kevin/Documents/jetson-inference/python/training/detection/ssd/models/darts/base"
+DIR = "/home/kevin/Documents/jetson-inference/python/training/detection/ssd/models/darts/base"
 
-net = detectNet(argv=["--model=" + dir + "/ssd-mobilenet.onnx",
-                      "--labels=" + dir + "/labels.txt",
-                      "--input-blob=input_0",
-                      "--output-cvg=scores",
-                      "--output-bbox=boxes"], threshold=0.5)
+NETWORK = detectNet(argv=["--model=" + DIR + "/ssd-mobilenet.onnx",
+                          "--labels=" + DIR + "/labels.txt",
+                          "--input-blob=input_0",
+                          "--output-cvg=scores",
+                          "--output-bbox=boxes"], threshold=0.5)
+X0 = 0
+Y0 = 0
 
-center_x = 0
-center_y = 0
-
-def idle_start():
-    print("IDLE START State")
-    # Wait for bull detection
-    while True: # TODO : Add timeout
-        bull_detected = False
-        img = camera.Capture()
+def detect(cam, net, id):
+    while True:
+        img = cam.Capture()
 
         if img is None:
             continue
@@ -51,14 +46,15 @@ def idle_start():
         detections = net.Detect(img)
 
         for detection in detections:
-            if detection.ClassID == 1:  # Bull
-                center_x = detection.Center[0]
-                center_y = detection.Center[1]
-                bull_detected = True
-                break
+            if id == 1 and detection.ClassID == 1:
+                return detection.Center[0], detection.Center[1]
+            elif id == 2 and detection.ClassID == 2:
+                return detection.Left, detection.Bottom
 
-        if bull_detected == True:
-            break
+def idle_start():
+    print("IDLE START State")
+    # Detect bull
+    X0, Y0 = detect(cam=CAMERA, net=NETWORK, id=1)
 
     # Send ready message to scoring system
     client.send(constants.READY_MSG.encode())
@@ -69,60 +65,97 @@ def wait_throw():
         msg = client.recv(constants.BUFFER_SIZE).decode()
         if msg == constants.LOOK_MSG:
             break
-        time.sleep(1)
+        else:
+            time.sleep(1)
 
-# TODO : pixel_x, pixel_y = find_dart_state
 def find_dart():
     print("FIND DART State")
-    while True:
-        img = camera.Capture()
+    # Detect dart
+    X, Y = detect(cam=CAMERA, net=NETWORK, id=2)
+    return X, Y
 
-        if img is None:
-            continue
+def translate_pos(pixel_x, pixel_y):
+    x_prime = pixel_x
+    p0 = Y0
+    dy = p0 / d0 * pixel_y
+    y_prime = dy - d0
+    return x_prime, y_prime
 
-        detections = net.Detect(img)
+def map_ring(rad):
+    if rad >= 162 or rad < 170:
+        return 'A'
+    elif rad >= 107 or rad < 162:
+        return 'B'
+    elif rad >= 99 or rad < 107:
+        return 'C'
+    elif rad >= 16 or rad < 99:
+        return 'D'
+    elif rad >= 6.35 or rad < 16:
+        return 'X'
+    elif rad >= 0 or rad < 6.35:
+        return 'XX'
+    else:
+        return 'Z'
 
-        for detection in detections:
-            if detection.ClassID == 2:  # Dart
-                pixel_x = detection.Left
-                pixel_y = detection.Bottom
-                return pixel_x, pixel_y
+def map_number(ang):
+    if ang >= 351 or ang < 9:
+        return 20
+    elif ang >= 9 or ang < 27:
+        return 5
+    elif ang >= 27 or ang < 45:
+        return 12
+    elif ang >= 45 or ang < 63:
+        return 9
+    elif ang >= 63 or ang < 81:
+        return 14
+    elif ang >= 81 or ang < 99:
+        return 11
+    elif ang >= 99 or ang < 117:
+        return 8
+    elif ang >= 117 or ang < 135:
+        return 16
+    elif ang >= 135 or ang < 153:
+        return 7
+    elif ang >= 153 or ang < 171:
+        return 19
+    elif ang >= 171 or ang < 189:
+        return 3
+    elif ang >= 189 or ang < 207:
+        return 17
+    elif ang >= 207 or ang < 225:
+        return 2
+    elif ang >= 225 or ang < 243:
+        return 15
+    elif ang >= 243 or ang < 261:
+        return 10
+    elif ang >= 261 or ang < 279:
+        return 6
+    elif ang >= 279 or ang < 297:
+        return 13
+    elif ang >= 297 or ang < 315:
+        return 4
+    elif ang >= 315 or ang < 333:
+        return 18
+    elif ang >= 333 or ang < 351:
+        return 1
+    else:
+        return 0
 
-# TODO : map_dart_state(pixel_x, pixel_y, conn)
 def map_dart(x, y):
     print("MAP DART State")
-    # TODO : x, y = translate_location(pixel_x, pixel_y)
-    x_loc = x
-    # Translate y location due to projection geometry
-    p0 = center_y
-    dy = p0 / d0 * y
-    y_loc = dy - d0
 
-    # TODO : ring = map_ring(x, y, x0, y0)
-    r = math.sqrt(math.pow((x_loc - center_x), 2) + math.pow((y_loc - center_y), 2))
+    # Translate position
+    x_prime, y_prime = translate_pos(pixel_x=x, pixel_y=y)
 
+    # Compute radius
+    r = math.sqrt(math.pow((x_prime - X0), 2) + math.pow((y_prime - Y0), 2))
 
     # Map ring hit
-    print(str(x_loc - center_x))
-    if r >= 162 or r < 170:
-        print("A")
-    elif r >= 107 or r < 162:
-        print("B")
-    elif r >= 99 or r < 107:
-        print("C")
-    elif r >= 16 or r < 99:
-        print("D")
-    elif r >= 6.35 or r < 16:
-        print("X")
-    elif r >= 0 or r < 6.35:
-        print("XX")
-    else:
-        print("Z")
+    ring = map_ring(rad=r)
 
-    # Map number hit
-    # TODO : number = map_number(x, y, x0, y0)
-    quad_x = x_loc - center_x
-    quad_y = y - center_y
+    # Compute angle
+    quad_x = x_prime - X0
+    quad_y = y_prime - Y0
 
     if quad_x > 0 and quad_y > 0:
         theta = math.atan(quad_y / quad_x)
@@ -135,58 +168,18 @@ def map_dart(x, y):
     else:
         theta = 0.0
 
-    
+    # Convert to degrees
     theta = math.degrees(theta)
-    print(str(theta))
+    # Map number hit
+    number = map_number(ang=theta)
 
-    if theta >= 351 or theta < 9:
-        number = 20
-    elif theta >= 9 or theta < 27:
-        number = 5
-    elif theta >= 27 or theta < 45:
-        number = 12
-    elif theta >= 45 or theta < 63:
-        number = 9
-    elif theta >= 63 or theta < 81:
-        number = 14
-    elif theta >= 81 or theta < 99:
-        number = 11
-    elif theta >= 99 or theta < 117:
-        number = 8
-    elif theta >= 117 or theta < 135:
-        number = 16
-    elif theta >= 135 or theta < 153:
-        number = 7
-    elif theta >= 153 or theta < 171:
-        number = 19
-    elif theta >= 171 or theta < 189:
-        number = 3
-    elif theta >= 189 or theta < 207:
-        number = 17
-    elif theta >= 207 or theta < 225:
-        number = 2
-    elif theta >= 225 or theta < 243:
-        number = 15
-    elif theta >= 243 or theta < 261:
-        number = 10
-    elif theta >= 261 or theta < 279:
-        number = 6
-    elif theta >= 279 or theta < 297:
-        number = 13
-    elif theta >= 297 or theta < 315:
-        number = 4
-    elif theta >= 315 or theta < 333:
-        number = 18
-    elif theta >= 333 or theta < 351:
-        number = 1
-    else:
-        number = 0
+    # TODO : Send ring and number to scoring system
 
-    print(number)
+
+    print(str(number) + '-' + str(ring))
 
 # Main loop
 def main():
-    # 
 
     idle_start()
 
