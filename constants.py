@@ -9,4 +9,7 @@ BUFFER_SIZE = 1024
 READY_MSG = "READY"
 LOOK_MSG = "LOOK"
 
+# Data message
+MSG = {"radius": 0.0, "angle": 0.0}
+
 # EOF

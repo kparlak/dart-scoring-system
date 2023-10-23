@@ -1,28 +1,34 @@
 #!/usr/bin/env python
+# test_detect.py
 
 import sys
-sys.path.append("..")
-from jetson_utils import videoOutput
+sys.path.append("../..")
+from jetson_inference import detectNet
+from jetson_utils import videoSource, videoOutput
 
-import imaging_constants as ic
+display = videoOutput("display://0")
+camera = videoSource('/dev/video0')
 
-DISPLAY = videoOutput("display://0")
+dir = "/home/kevin/Documents/jetson-inference/python/training/detection/ssd/models/darts/base"
+network = detectNet(argv=["--model=" + dir + "/ssd-mobilenet.onnx",
+                          "--labels=" + dir + "/labels.txt",
+                          "--input-blob=input_0",
+                          "--output-cvg=scores",
+                          "--output-bbox=boxes"], threshold=0.5)
 
-while DISPLAY.IsStreaming():
-    img = ic.CAMERA.Capture()
+while display.IsStreaming():
+    img = camera.Capture()
 
     if img is None:
         continue
 
-    detections = ic.NETWORK.Detect(img)
-    
-    DISPLAY.Render(img)
-    DISPLAY.SetStatus("Object Detection | Network {:.0f} FPS".format(ic.NETWORK.GetNetworkFPS()))
+    detections = network.Detect(img)
+
+    display.Render(img)
+    display.SetStatus("Object Detection | Network {:.0f} FPS".format(network.GetNetworkFPS()))
 
     for detection in detections:
         if detection.ClassID == 1:  # Bull
-            center_x = detection.Center[0]
-            center_y = detection.Center[1]
             left = detection.Left
             right = detection.Right
             bottom = detection.Bottom
@@ -36,4 +42,5 @@ while DISPLAY.IsStreaming():
             top = detection.Top
             print("Dart: Left = " + str(left) + ", Right = " + str(right) +
                   ", Bottom = " + str(bottom) + ", Top = " + str(top))
+
 # EOF

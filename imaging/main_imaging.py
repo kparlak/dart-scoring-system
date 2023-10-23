@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# constants.py
+# main_imaging.py
 
 import sys
 sys.path.append("..")
@@ -9,8 +9,10 @@ import time
 import math
 from jetson_inference import detectNet
 from jetson_utils import videoSource
+import json
 import pickle
-import struct
+import argparse
+
 
 d0 = 431.8  # mm
 
@@ -50,29 +52,6 @@ def detect(cam, net, id):
                 return detection.Center[0], detection.Center[1]
             elif id == 2 and detection.ClassID == 2:
                 return detection.Left, detection.Bottom
-
-def idle_start():
-    print("IDLE START State")
-    # Detect bull
-    X0, Y0 = detect(cam=CAMERA, net=NETWORK, id=1)
-
-    # Send ready message to scoring system
-    client.send(constants.READY_MSG.encode())
-
-def wait_throw():
-    print("WAIT THROW State")
-    while True:
-        msg = client.recv(constants.BUFFER_SIZE).decode()
-        if msg == constants.LOOK_MSG:
-            break
-        else:
-            time.sleep(1)
-
-def find_dart():
-    print("FIND DART State")
-    # Detect dart
-    X, Y = detect(cam=CAMERA, net=NETWORK, id=2)
-    return X, Y
 
 def translate_pos(pixel_x, pixel_y):
     x_prime = pixel_x
@@ -141,57 +120,106 @@ def map_number(ang):
     else:
         return 0
 
-def map_dart(x, y):
-    print("MAP DART State")
+class ImagingStateMachine:
+    def __init__(self) -> None:
+        self.state = 'IDLE_START'
+        self.transitions = {
+            'IDLE_START' : {'start' : 'WAIT_THROW'},
+            'WAIT_THROW' : {'new_dart' : 'FIND_DART'},
+            'FIND_DART' : {'dart_found' : 'MAP_DART'},
+            'MAP_DART' : {'done' : 'WAIT_THROW'}
+        }
 
-    # Translate position
-    x_prime, y_prime = translate_pos(pixel_x=x, pixel_y=y)
+    def get_action(self):
+        return self.action
 
-    # Compute radius
-    r = math.sqrt(math.pow((x_prime - X0), 2) + math.pow((y_prime - Y0), 2))
+    def transition(self, action):
+        if action in self.transitions[self.state]:
+            self.state = self.transitions[self.state][action]
 
-    # Map ring hit
-    ring = map_ring(rad=r)
+    def runState(self):
+        if self.state == 'IDLE_START':
+            self.idleStart()
+        elif self.state == 'WAIT_THROW':
+            self.waitThrow()
+        elif self.state == 'FIND_DART':
+            self.findDart()
+        elif self.state == 'MAP_DART':
+            self.mapDart()
 
-    # Compute angle
-    quad_x = x_prime - X0
-    quad_y = y_prime - Y0
+    def idleStart(self):
+        print("IDLE START")
+        # Detect bull
+        self.X0, self.Y0 = detect(cam=CAMERA, net=NETWORK, id=1)
+        # Send message to scoring system
+        client.send(constants.READY_MSG.encode())
+        # Set transition
+        self.action = 'start'
 
-    if quad_x > 0 and quad_y > 0:
-        theta = math.atan(quad_y / quad_x)
-    elif quad_x < 0 and quad_y > 0:
-        theta = math.atan(quad_x / quad_y) + math.pi
-    elif quad_x > 0 and quad_y < 0:
-        theta = math.atan(quad_y / quad_x) + 2 * math.pi
-    elif quad_x < 0 and quad_y < 0:
-        theta = math.atan(quad_x / quad_y) + 3 * math.pi
-    else:
-        theta = 0.0
+    def waitThrow(self):
+        print("WAIT THROW")
+        while True:
+            msg = client.recv(constants.BUFFER_SIZE).decode()
+            if msg == constants.LOOK_MSG:
+                break
+            else:
+                time.sleep(1)
+        # Set transition
+        self.action = 'new_dart'
 
-    # Convert to degrees
-    theta = math.degrees(theta)
-    # Map number hit
-    number = map_number(ang=theta)
+    def findDart(self):
+        print("FIND DART")
+        # Detect dart
+        self.X, self.Y = detect(cam=CAMERA, net=NETWORK, id=2)
+        # Set transition
+        self.action = 'dart_found'
 
-    # TODO : Send ring and number to scoring system
+    def mapDart(self):
+        print("MAP DART")
+        # Translate position
+        x_prime, y_prime = translate_pos(self.X, self.Y)
+        # Compute radius
+        r = math.sqrt(math.pow((x_prime - X0), 2) + math.pow((y_prime - Y0), 2))
+        # Map ring hit
+        ring = map_ring(rad=r)
+        # Compute angle
+        quad_x = x_prime - X0
+        quad_y = y_prime - Y0
+        # Compute quadrant for angle calculation
+        if quad_x > 0 and quad_y > 0:
+            theta = math.atan(quad_y / quad_x)
+        elif quad_x < 0 and quad_y > 0:
+            theta = math.atan(quad_x / quad_y) + math.pi
+        elif quad_x > 0 and quad_y < 0:
+            theta = math.atan(quad_y / quad_x) + 2 * math.pi
+        elif quad_x < 0 and quad_y < 0:
+            theta = math.atan(quad_x / quad_y) + 3 * math.pi
+        else:
+            theta = 0.0
+        # Convert to degrees
+        theta = math.degrees(theta)
+        # Map number hit
+        number = map_number(ang=theta)
+        # TODO : Send ring and number to scoring system
+        constants.MSG["radius"] = r
+        constants.MSG["angle"] = theta
+        client.sendall(pickle.dumps(constants.MSG))
 
+        #data = json.dumps(constants.MSG)
+        #server.sendall(bytes(data, encoding="utf-8"))
+        print(str(number) + '-' + str(ring))
 
-    print(str(number) + '-' + str(ring))
+        # Set transition
+        self.action = 'done'
 
 # Main loop
 def main():
+    SM = ImagingStateMachine()
+    while True:
+        SM.runState()
+        SM.transition(action=SM.get_action())
 
-    idle_start()
-
-    wait_throw()
-
-    pixel_x, pixel_y = find_dart()
-
-    # Map dart state
-    map_dart(x=pixel_x, y=pixel_y)
-
-    print("Done")
-
-    server.close()
 
 main()
+
+server.close()
