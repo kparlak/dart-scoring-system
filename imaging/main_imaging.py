@@ -203,10 +203,13 @@ class ImagingStateMachine:
         # TODO : Send ring and number to scoring system
         constants.MSG["radius"] = r
         constants.MSG["angle"] = theta
-        client.sendall(pickle.dumps(constants.MSG))
+        #client.sendall(pickle.dumps(constants.MSG))
 
         #data = json.dumps(constants.MSG)
         #server.sendall(bytes(data, encoding="utf-8"))
+        client.send(constants.TEST_MSG.encode())
+        # TODO : Fix
+
         print(str(number) + '-' + str(ring))
 
         # Set transition

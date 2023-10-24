@@ -2,14 +2,14 @@
 # test_detect.py
 
 import sys
-sys.path.append("../..")
+sys.path.append("..")
 from jetson_inference import detectNet
 from jetson_utils import videoSource, videoOutput
 
 display = videoOutput("display://0")
 camera = videoSource('/dev/video0')
 
-dir = "/home/kevin/Documents/jetson-inference/python/training/detection/ssd/models/darts/base"
+dir = "/home/kevin/Documents/dart-scoring-system/imaging/models/ssd"
 network = detectNet(argv=["--model=" + dir + "/ssd-mobilenet.onnx",
                           "--labels=" + dir + "/labels.txt",
                           "--input-blob=input_0",
