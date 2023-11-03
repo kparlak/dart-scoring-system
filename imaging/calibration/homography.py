@@ -1,6 +1,5 @@
 import cv2
 import numpy as np
-import traceback
 
 display_blur = False
 display_thresh = False
@@ -12,8 +11,8 @@ display_dest = False
 
 display_corr = False
 
-image_src = cv2.imread('c:\\Data\\test\\img_src.jpg')
-image_dest = cv2.imread('c:\\Data\\test\\img_dest.jpg')
+image_src = cv2.imread('img_src.jpg')
+image_dest = cv2.imread('img_dest.jpg')
 
 image = image_src.copy()
 
@@ -104,7 +103,6 @@ def get_dartboard_circle(image, threshold):
     (x, y), r = cv2.minEnclosingCircle(contour)
 
     return x, y, r
-
 
 # Source coordinate frame
 ellipse = get_dartboard_ellipse(image=image_src, threshold=70)

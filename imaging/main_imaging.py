@@ -6,8 +6,8 @@ import constants
 import socket
 import time
 
-from dartboard import Dartboard
-from detection import Detection
+from imaging.dartboard import Dartboard
+from imaging.detection_model import DetectionModel
 
 class ImagingStateMachine:
     def __init__(self) -> None:
@@ -18,8 +18,8 @@ class ImagingStateMachine:
             'FIND_DART' : {'dart_found' : 'MAP_DART'},
             'MAP_DART' : {'done' : 'WAIT_THROW'}
         }
-        self.detection = Detection()
-        self.dartboard = Dartboard()
+        self.model = DetectionModel()
+        self.board = Dartboard()
         self.connect()
 
     def connect(self):
@@ -50,7 +50,7 @@ class ImagingStateMachine:
     def idle_start(self):
         print("IDLE START")
         # Detect bull
-        x0, y0 = self.detection.find_bull()
+        x0, y0 = self.model.find_bull()
         # Set dartboard center
         self.dartboard.set_center(x=x0, y=y0)
         # Send message to scoring system
@@ -72,14 +72,14 @@ class ImagingStateMachine:
     def find_dart(self):
         print("FIND DART")
         # Detect dart
-        self.x, self.y = self.detection.find_dart()
+        self.x, self.y = self.model.find_dart()
         # Set transition
         self.action = 'dart_found'
 
     def map_dart(self):
         print("MAP DART")
         # Update dartboard
-        number, ring = self.dartboard.update(x=self.x, y=self.y)
+        number, ring = self.board.update(x=self.x, y=self.y)
         # TODO : Send ring and number to scoring system
         #constants.MSG["radius"] = self.dartboard.get_radius()
         #constants.MSG["angle"] = self.dartboard.get_theta()

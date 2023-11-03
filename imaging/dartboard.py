@@ -14,14 +14,14 @@ class Dartboard:
         self.dist_y = 0.0
         self.calibrate()
 
+    def get_center(self):
+        return self.x0, self.y0
+
     def get_radius(self):
         return self.radius
 
     def get_theta(self):
         return self.theta
-
-    def get_center(self):
-        return self.x0, self.y0
 
     def get_pos(self):
         return self.pos_x, self.pos_y
@@ -30,7 +30,10 @@ class Dartboard:
         return self.dist_x, self.dist_y
 
     def calibrate(self):
-        self.H = np.genfromtxt("H.txt", delimiter=",", dtype=float)
+        self.H = [[1.00243107e+00, 2.98250358e-01,-2.62532023e+02],
+                  [1.29748450e-07, 1.72156056e+00, 1.88249310e+02],
+                  [2.14034568e-10, 6.54323960e-04, 1.00000000e+00]]
+        #self.H = np.genfromtxt("H.txt", delimiter=",", dtype=float)
 
     def translate_pos(self, x, y):
         point = np.array([x, y, 1])
@@ -42,11 +45,6 @@ class Dartboard:
         center = self.translate_pos(x, y)
         self.x0 = x * self.factor
         self.y0 = center[1] * self.factor
-
-    # def set_pos(self, x, y):
-    #     pos = self.translate_pos(x, y)
-    #     self.x = x * self.factor
-    #     self.y = pos[1] * self.factor
 
     def calc_radius(self, x, y):
         return math.sqrt(math.pow(x, 2) + math.pow(y, 2))

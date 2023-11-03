@@ -2,34 +2,26 @@
 
 import sys
 sys.path.append("..")
-from jetson_inference import detectNet
-from jetson_utils import videoSource, videoOutput
-from dartboard import Dartboard
 import time
 
-display = videoOutput("display://0")
-camera = videoSource('/dev/video0')
+from detection_model import DetectionModel
+from dartboard import Dartboard
 
-dir = "/home/kevin/Documents/dart-scoring-system/imaging/models/ssd"
-network = detectNet(argv=["--model=" + dir + "/ssd-mobilenet.onnx",
-                          "--labels=" + dir + "/labels.txt",
-                          "--input-blob=input_0",
-                          "--output-cvg=scores",
-                          "--output-bbox=boxes"], threshold=0.5)
-
+model = DetectionModel()
 board = Dartboard()
+
 bull_found = False
 
-while display.IsStreaming():
-    img = camera.Capture()
+while model.get_display().IsStreaming():
+    img = model.get_source().Capture()
 
     if img is None:
         continue
 
-    detections = network.Detect(img)
+    detections = model.get_network().Detect(img)
 
-    display.Render(img)
-    display.SetStatus("Object Detection | Network {:.0f} FPS".format(network.GetNetworkFPS()))
+    model.get_display().Render(img)
+    model.get_display().SetStatus("Object Detection | Network {:.0f} FPS".format(model.get_network().GetNetworkFPS()))
 
     for detection in detections:
         if detection.ClassID == 1 and bull_found == False: # Bull
