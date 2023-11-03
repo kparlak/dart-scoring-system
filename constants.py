@@ -1,8 +1,6 @@
-#!/usr/bin/env python
-# constants.py
-
-IMAGING_IP_ADDRESS = '10.0.0.3'
+IP_ADDRESS = '10.0.0.3'
 PORT = 5000
+NUM_CONNECTIONS = 1
 
 BUFFER_SIZE = 1024
 

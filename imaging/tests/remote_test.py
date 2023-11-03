@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# remote_test.py
 
 import sys
 sys.path.append("../..")
@@ -11,7 +10,7 @@ import pickle
 
 # Create connection
 client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-server_address = (constants.IMAGING_IP_ADDRESS, constants.PORT)
+server_address = (constants.IP_ADDRESS, constants.PORT)
 client.connect(server_address)
 
 print("Waiting on READY message")
@@ -38,3 +37,4 @@ while True:
             break;
         time.sleep(1)
 
+# EOF
