@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 # -*-coding:utf-8 -*-
 '''
-@File    :   run_remote.py
+@File    :   run_main.py
 @Time    :   2023/11/04
 @Author  :   Kevin Parlak
 @Version :   1.0
 @License :   MIT
-@Desc    :   Runs through main logic remotely
+@Desc    :   Runs through main logic
 '''
 
 import sys
@@ -46,7 +46,5 @@ while True:
         # if (data == constants.TEST_MSG):
         #     break;
         break
-
-    print()
 
 # EOF
