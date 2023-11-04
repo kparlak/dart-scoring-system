@@ -152,6 +152,10 @@ class Dartboard:
         # Calculate distance from center
         self.dist_x = self.pos_x - self.x0
         self.dist_y = self.y0 - self.pos_y
-        return self.update_number(self.dist_x, self.dist_y), self.update_ring(self.dist_x, self.dist_y)
+        number = self.update_number(self.dist_x, self.dist_y)
+        ring = self.update_ring(self.dist_x, self.dist_y)
+        if ring == 'X' or ring == 'Y' or ring == 'Z':
+            number = 0
+        return number, ring
 
 # EOF
