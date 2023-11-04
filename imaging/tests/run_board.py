@@ -7,7 +7,7 @@ import time
 from detection_model import DetectionModel
 from dartboard import Dartboard
 
-model = DetectionModel()
+model = DetectionModel(display=True)
 board = Dartboard()
 
 bull_found = False

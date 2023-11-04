@@ -6,7 +6,7 @@ import time
 
 from detection_model import DetectionModel
 
-model = DetectionModel()
+model = DetectionModel(display=True)
 
 while model.get_display().IsStreaming():
     img = model.get_source().Capture()

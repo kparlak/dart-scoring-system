@@ -5,6 +5,7 @@ sys.path.append("..")
 import constants
 import socket
 import time
+import pickle
 
 from imaging.dartboard import Dartboard
 from imaging.detection_model import DetectionModel
@@ -14,11 +15,11 @@ class ImagingStateMachine:
         self.state = 'IDLE_START'
         self.transitions = {
             'IDLE_START' : {'start' : 'WAIT_THROW'},
-            'WAIT_THROW' : {'new_dart' : 'FIND_DART'},
-            'FIND_DART' : {'dart_found' : 'MAP_DART'},
+            'WAIT_THROW' : {'dart' : 'FIND_DART'},
+            'FIND_DART' : {'found' : 'MAP_DART'},
             'MAP_DART' : {'done' : 'WAIT_THROW'}
         }
-        self.model = DetectionModel()
+        self.model = DetectionModel(display=False)
         self.board = Dartboard()
         self.connect()
 
@@ -37,7 +38,7 @@ class ImagingStateMachine:
         if action in self.transitions[self.state]:
             self.state = self.transitions[self.state][action]
 
-    def runState(self):
+    def run_state(self):
         if self.state == 'IDLE_START':
             self.idle_start()
         elif self.state == 'WAIT_THROW':
@@ -52,7 +53,7 @@ class ImagingStateMachine:
         # Detect bull
         x0, y0 = self.model.find_bull()
         # Set dartboard center
-        self.dartboard.set_center(x=x0, y=y0)
+        self.board.set_center(x=x0, y=y0)
         # Send message to scoring system
         self.client.send(constants.READY_MSG.encode())
         # Set transition
@@ -67,33 +68,39 @@ class ImagingStateMachine:
             else:
                 time.sleep(1)
         # Set transition
-        self.action = 'new_dart'
+        self.action = 'dart'
 
     def find_dart(self):
         print("FIND DART")
         # Detect dart
         self.x, self.y = self.model.find_dart()
         # Set transition
-        self.action = 'dart_found'
+        self.action = 'found'
 
     def map_dart(self):
         print("MAP DART")
         # Update dartboard
         number, ring = self.board.update(x=self.x, y=self.y)
-        # TODO : Send ring and number to scoring system
-        #constants.MSG["radius"] = self.dartboard.get_radius()
-        #constants.MSG["angle"] = self.dartboard.get_theta()
-        #client.sendall(pickle.dumps(constants.MSG))
-        #data = json.dumps(constants.MSG)
-        #server.sendall(bytes(data, encoding="utf-8"))
-        self.client.send(constants.TEST_MSG.encode())
+        # Send data
+        constants.MSG["number"] = number
+        constants.MSG["ring"] = ring
+        constants.MSG["radius"] = self.board.get_radius()
+        constants.MSG["theta"] = self.board.get_theta()
+        data = pickle.dumps(constants.MSG, protocol=2)
+        self.client.sendall(data)
+        # self.client.send(constants.TEST_MSG.encode())
         # Set transition
         self.action = 'done'
 
 if __name__ == '__main__':
-    SM = ImagingStateMachine()
-    while True:
-        SM.runState()
-        SM.transition(action=SM.get_action())
+    try:
+        SM = ImagingStateMachine()
+        while True:
+            SM.run_state()
+            SM.transition(action=SM.get_action())
+
+    except Exception as e:
+        print(e)
+        SM.server.close()
 
 # EOF

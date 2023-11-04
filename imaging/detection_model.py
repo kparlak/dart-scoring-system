@@ -3,15 +3,16 @@ from jetson_inference import detectNet
 from jetson_utils import videoSource, videoOutput
 
 class DetectionModel():
-    def __init__(self) -> None:
+    def __init__(self, display) -> None:
         self.source = videoSource('/dev/video0')
-        self.display = videoOutput("display://0")
         self.directory = os.environ['MODEL']
         self.network = detectNet(argv=["--model=" + self.directory+ "/ssd-mobilenet.onnx",
                                        "--labels=" + self.directory  + "/labels.txt",
                                        "--input-blob=input_0",
                                        "--output-cvg=scores",
                                        "--output-bbox=boxes"], threshold=0.5)
+        if display == True:
+            self.display = videoOutput("display://0")
 
     def get_source(self):
         return self.source
