@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import sys
-sys.path.append("..")
+sys.path.append("../..")
 import constants
 import socket
 import time
@@ -15,8 +15,9 @@ client.connect(server_address)
 
 print("Waiting on READY message")
 while True:
-    data = client.recv(1024).decode()
+    data = client.recv(constants.BUFFER_SIZE).decode()
     if (data == constants.READY_MSG):
+        print("Received READY message")
         break;
     else:
         time.sleep(1)
@@ -28,13 +29,15 @@ while True:
 
     print("Waiting on dart location")
     while True:
-        # data = client.recv(1024)
-        # kevin = pickle.loads(data)
-        # print(data)
-        # time.sleep(1)
-        data = client.recv(1024).decode()
-        if (data == constants.TEST_MSG):
-            break;
-        time.sleep(1)
+        data = client.recv(constants.BUFFER_SIZE)
+        constants.MSG = pickle.loads(data)
+        for k, v in constants.MSG.items():
+            print(k, v)
+        # data = client.recv(1024).decode()
+        # if (data == constants.TEST_MSG):
+        #     break;
+        break
+
+    print()
 
 # EOF
