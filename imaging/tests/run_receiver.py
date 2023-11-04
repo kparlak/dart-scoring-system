@@ -30,6 +30,7 @@ client.connect(server_address)
 try:
     data = client.recv(constants.BUFFER_SIZE)
     constants.MSG = pickle.loads(data)
+    print("Data received")
 
     for k, v in constants.MSG.items():
         print(k, v)

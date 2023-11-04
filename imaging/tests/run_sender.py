@@ -38,6 +38,7 @@ constants.MSG["theta"] = 45.5
 try:
     data = pickle.dumps(constants.MSG, protocol=2)
     client.sendall(data)
+    print("Data sent")
 
 except Exception as e:
     print(e)
