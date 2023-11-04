@@ -1,4 +1,13 @@
 #!/usr/bin/env python
+# -*-coding:utf-8 -*-
+'''
+@File    :   main_imaging.py
+@Time    :   2023/11/04
+@Author  :   Kevin Parlak
+@Version :   1.0
+@License :   MIT
+@Desc    :   Main for imaging system
+'''
 
 import sys
 sys.path.append("..")

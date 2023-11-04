@@ -1,3 +1,14 @@
+#!/usr/bin/env python
+# -*-coding:utf-8 -*-
+'''
+@File    :   dartboard.py
+@Time    :   2023/11/04
+@Author  :   Kevin Parlak
+@Version :   1.0
+@License :   MIT
+@Desc    :   Class for dartboard logic
+'''
+
 import numpy as np
 import math
 

@@ -1,4 +1,13 @@
 #!/usr/bin/env python
+# -*-coding:utf-8 -*-
+'''
+@File    :   run_sender.py
+@Time    :   2023/11/04
+@Author  :   Kevin Parlak
+@Version :   1.0
+@License :   MIT
+@Desc    :   Runs TCP sender of serialized data
+'''
 
 import sys
 sys.path.append("../..")

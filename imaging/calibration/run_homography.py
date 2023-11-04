@@ -1,10 +1,14 @@
 #!/usr/bin/env python
+# -*-coding:utf-8 -*-
+'''
+@File    :   run_homography.py
+@Time    :   2023/11/04
+@Author  :   Kevin Parlak
+@Version :   1.0
+@License :   MIT
+@Desc    :   Creates homographic projection matrix based on source and destination image
+'''
 
-__author__ = "Kevin Parlak"
-__license__ = "MIT License"
-__version__ = "0.0.1"
-
-# Third-party libraries
 import cv2
 import numpy as np
 

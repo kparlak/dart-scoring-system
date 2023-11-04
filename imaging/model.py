@@ -1,3 +1,14 @@
+#!/usr/bin/env python
+# -*-coding:utf-8 -*-
+'''
+@File    :   model.py
+@Time    :   2023/11/04
+@Author  :   Kevin Parlak
+@Version :   1.0
+@License :   MIT
+@Desc    :   Class for model logic
+'''
+
 import os
 from jetson_inference import detectNet
 from jetson_utils import videoSource, videoOutput

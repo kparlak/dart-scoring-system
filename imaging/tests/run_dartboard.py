@@ -1,11 +1,18 @@
 #!/usr/bin/env python
+# -*-coding:utf-8 -*-
+'''
+@File    :   run_board.py
+@Time    :   2023/11/04
+@Author  :   Kevin Parlak
+@Version :   1.0
+@License :   MIT
+@Desc    :   Runs through dartboard logic
+'''
 
-# Standard libraries
 import sys
 sys.path.append("..")
 import time
 
-# Custom classes
 from model import Model
 from dartboard import Dartboard
 
@@ -53,6 +60,6 @@ while model.get_display().IsStreaming():
             print('radius = ' + str(radius))
             print()
 
-    time.sleep(10)
+    time.sleep(1)
 
 # EOF
