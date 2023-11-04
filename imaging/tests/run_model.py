@@ -4,9 +4,9 @@ import sys
 sys.path.append("..")
 import time
 
-from detection_model import DetectionModel
+from model import Model
 
-model = DetectionModel(display=True)
+model = Model(display=True)
 
 while model.get_display().IsStreaming():
     img = model.get_source().Capture()

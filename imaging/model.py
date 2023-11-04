@@ -2,7 +2,7 @@ import os
 from jetson_inference import detectNet
 from jetson_utils import videoSource, videoOutput
 
-class DetectionModel():
+class Model():
     def __init__(self, display) -> None:
         self.source = videoSource('/dev/video0')
         self.directory = os.environ['MODEL']
@@ -47,6 +47,6 @@ class DetectionModel():
 
             for detection in detections:
                 if detection.ClassID == 2:
-                    return detection.Left, detection.Right
+                    return detection.Left, detection.Bottom
 
 # EOF

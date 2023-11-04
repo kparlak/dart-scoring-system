@@ -7,20 +7,20 @@ import socket
 import time
 import pickle
 
-from imaging.dartboard import Dartboard
-from imaging.detection_model import DetectionModel
+from dartboard import Dartboard
+from model import Model
 
 class ImagingStateMachine:
     def __init__(self) -> None:
         self.state = 'IDLE_START'
         self.transitions = {
-            'IDLE_START' : {'start' : 'WAIT_THROW'},
-            'WAIT_THROW' : {'dart' : 'FIND_DART'},
+            'IDLE_START' : {'started' : 'WAIT_THROW'},
+            'WAIT_THROW' : {'thrown' : 'FIND_DART'},
             'FIND_DART' : {'found' : 'MAP_DART'},
-            'MAP_DART' : {'done' : 'WAIT_THROW'}
+            'MAP_DART' : {'mapped' : 'WAIT_THROW'}
         }
-        self.model = DetectionModel(display=False)
-        self.board = Dartboard()
+        self.model = Model(display=False)
+        self.dartboard = Dartboard()
         self.connect()
 
     def connect(self):
@@ -49,18 +49,19 @@ class ImagingStateMachine:
             self.map_dart()
 
     def idle_start(self):
-        print("IDLE START")
+        print(self.state)
         # Detect bull
         x0, y0 = self.model.find_bull()
         # Set dartboard center
-        self.board.set_center(x=x0, y=y0)
+        self.dartboard.set_center(x=x0, y=y0)
         # Send message to scoring system
         self.client.send(constants.READY_MSG.encode())
         # Set transition
-        self.action = 'start'
+        self.action = 'started'
 
     def wait_throw(self):
-        print("WAIT THROW")
+        print(self.state)
+        # Wait for LOOK message
         while True:
             msg = self.client.recv(constants.BUFFER_SIZE).decode()
             if msg == constants.LOOK_MSG:
@@ -68,39 +69,38 @@ class ImagingStateMachine:
             else:
                 time.sleep(1)
         # Set transition
-        self.action = 'dart'
+        self.action = 'thrown'
 
     def find_dart(self):
-        print("FIND DART")
+        print(self.state)
         # Detect dart
         self.x, self.y = self.model.find_dart()
         # Set transition
         self.action = 'found'
 
     def map_dart(self):
-        print("MAP DART")
+        print(self.state)
         # Update dartboard
-        number, ring = self.board.update(x=self.x, y=self.y)
+        number, ring = self.dartboard.update(x=self.x, y=self.y)
         # Send data
         constants.MSG["number"] = number
         constants.MSG["ring"] = ring
-        constants.MSG["radius"] = self.board.get_radius()
-        constants.MSG["theta"] = self.board.get_theta()
+        constants.MSG["radius"] = self.dartboard.get_radius()
+        constants.MSG["theta"] = self.dartboard.get_theta()
         data = pickle.dumps(constants.MSG, protocol=2)
         self.client.sendall(data)
         # self.client.send(constants.TEST_MSG.encode())
         # Set transition
-        self.action = 'done'
+        self.action = 'mapped'
 
 if __name__ == '__main__':
     try:
-        SM = ImagingStateMachine()
+        state_machine = ImagingStateMachine()
         while True:
-            SM.run_state()
-            SM.transition(action=SM.get_action())
+            state_machine.run_state()
+            state_machine.transition(action=state_machine.get_action())
 
     except Exception as e:
         print(e)
-        SM.server.close()
 
 # EOF

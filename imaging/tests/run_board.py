@@ -1,14 +1,16 @@
 #!/usr/bin/env python
 
+# Standard libraries
 import sys
 sys.path.append("..")
 import time
 
-from detection_model import DetectionModel
+# Custom classes
+from model import Model
 from dartboard import Dartboard
 
-model = DetectionModel(display=True)
-board = Dartboard()
+model = Model(display=True)
+dartboard = Dartboard()
 
 bull_found = False
 
@@ -27,13 +29,13 @@ while model.get_display().IsStreaming():
         if detection.ClassID == 1 and bull_found == False: # Bull
             X0 = detection.Center[0]
             Y0 = detection.Center[1]
-            board.set_center(X0, Y0)
+            dartboard.set_center(X0, Y0)
             bull_found = True
         if detection.ClassID == 2 and bull_found == True: # Dart
             X = detection.Left
             Y = detection.Bottom
 
-            number, ring = board.update(x=X, y=Y)
+            number, ring = dartboard.update(x=X, y=Y)
             print('number = ' + str(number))
             print('ring = ' + str(ring))
             #center_x, center_y = board.get_center()
@@ -42,15 +44,15 @@ while model.get_display().IsStreaming():
             #pos_x, pos_y = board.get_pos()
             #print('pos_x = ' + str(pos_x))
             #print('pos_y = ' + str(pos_y))
-            dist_x, dist_y = board.get_dist()
+            dist_x, dist_y = dartboard.get_dist()
             print('dist_x = ' + str(dist_x))
             print('dist_y = ' + str(dist_y))
-            theta = board.get_theta()
+            theta = dartboard.get_theta()
             print('theta = ' + str(theta))
-            radius = board.get_radius()
+            radius = dartboard.get_radius()
             print('radius = ' + str(radius))
             print()
 
-    time.sleep(0.1)
+    time.sleep(10)
 
 # EOF

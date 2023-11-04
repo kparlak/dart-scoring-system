@@ -1,3 +1,10 @@
+#!/usr/bin/env python
+
+__author__ = "Kevin Parlak"
+__license__ = "MIT License"
+__version__ = "0.0.1"
+
+# Third-party libraries
 import cv2
 import numpy as np
 
@@ -149,7 +156,6 @@ src_points = np.array([top_src, center_src, bottom_src, left_src, right_src])
 dest_points = np.array([top_dest, center_dest, bottom_dest, left_dest, right_dest])
 
 H, _ = cv2.findHomography(src_points, dest_points)
-#print(H)
 
 if display_corr:
     image_corr = cv2.warpPerspective(image, H, (image.shape[1], image.shape[0]))
