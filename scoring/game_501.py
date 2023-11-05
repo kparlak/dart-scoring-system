@@ -8,6 +8,7 @@
 @License :   MIT
 @Desc    :   Class for 501 game
 '''
+
 import array as arr
 
 class Game501():
