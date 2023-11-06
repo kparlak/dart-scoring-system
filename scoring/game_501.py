@@ -6,7 +6,7 @@
 @Author  :   Kevin Parlak
 @Version :   1.0
 @License :   MIT
-@Desc    :   Class for 501 game
+@Desc    :   Class for '501' game
 '''
 
 import array as arr

@@ -6,7 +6,7 @@
 @Author  :   Kevin Parlak
 @Version :   1.0
 @License :   MIT
-@Desc    :   Class for testing 501 game class
+@Desc    :   Class for testing '501' game class
 '''
 
 import unittest
