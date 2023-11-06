@@ -5,7 +5,7 @@
     - Nvidia Jetson Nano Developer Kit
     - [Jetson Nano Metal Case w/ PWM Fan](https://www.amazon.com/dp/B07Z2MFTYC)
     - [Waveshare Wireless NIC Module for Jetson Nano](https://www.amazon.com/dp/B07SGDRG34)
-    - MicroSD Card (at leaster 64GB)
+    - MicroSD Card (at least 64GB)
     - Power Supply to 2.5mm (20W)
 - Software
     - [jetson-inference](https://github.com/dusty-nv/jetson-inference/tree/master)

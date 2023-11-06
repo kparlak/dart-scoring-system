@@ -4,7 +4,7 @@
 - Hardware
     - Raspberry Pi (3B+ or newer)
     - [Freenove Touchscreen](https://www.amazon.com/FREENOVE-Touchscreen-Raspberry-Capacitive-Driver-Free/dp/B0B455LDKH)
-    - MicroSD Card (at leaster 64GB)
+    - MicroSD Card (at least 64GB)
     - Power Supply to USB-C (15W)
 - Software
     - [Raspberry Pi Imager](https://www.raspberrypi.com/documentation/computers/getting-started.html#raspberry-pi-imager)/Raspbian OS
