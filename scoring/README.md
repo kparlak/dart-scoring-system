@@ -26,8 +26,7 @@
     - Configure DHCP to home network using onboard Wi-Fi
     - Set local Ethernet to static IP address
         ```
-        Address: 10.0.0.2/31
-        Gateway: 10.0.0.3
+        10.0.0.2/8
         ```
 
 ## Execution
