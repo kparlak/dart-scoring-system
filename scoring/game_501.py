@@ -16,6 +16,9 @@ class Game501():
         self.score = arr.array('i', [501, 501])
         self.winner = arr.array('b', [False, False])
 
+    def get_num_players(self):
+        return len(self.score)
+
     def set_score(self, player, score):
         self.score[player] = score
 
