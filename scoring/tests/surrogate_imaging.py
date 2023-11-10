@@ -48,7 +48,7 @@ while True:
         elif data == constants.DONE_MSG:
             print('DONE message received, disconnecting')
             break
-        else:
-            print('Message not recognized')
+        # else:
+        #     print('Message not recognized')
 
 # EOF
