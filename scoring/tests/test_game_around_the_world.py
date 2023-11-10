@@ -49,6 +49,11 @@ class TestGameAroundTheWorld(unittest.TestCase):
         game = GameAroundTheWorld()
         self.assertEqual(game.update(player=0, number=20, ring='A'), 0, 'Score of 0 hitting 20 is wrong')
 
+    def test_score_5_hit_12(self):
+        game = GameAroundTheWorld()
+        game.set_score(player=0, score=5)
+        self.assertEqual(game.update(player=0, number=12, ring='A'), 5, 'Score of 5 hitting 12 is wrong')
+
     def test_score_1_hit_18(self):
         game = GameAroundTheWorld()
         game.set_score(player=0, score=1)

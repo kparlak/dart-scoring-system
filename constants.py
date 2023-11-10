@@ -17,6 +17,7 @@ BUFFER_SIZE = 1024
 
 READY_MSG = "READY"
 LOOK_MSG = "LOOK"
+DONE_MSG = "DONE"
 TEST_MSG = "TEST"
 
 # Data message

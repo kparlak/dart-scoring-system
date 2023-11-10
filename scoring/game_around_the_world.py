@@ -16,6 +16,9 @@ class GameAroundTheWorld():
         self.score = arr.array('i', [0, 0])
         self.winner = arr.array('b', [False, False])
 
+    def get_num_players(self):
+        return len(self.score)
+
     def set_score(self, player, score):
         self.score[player] = score
 
@@ -23,7 +26,7 @@ class GameAroundTheWorld():
         return self.score[player]
 
     def get_winner(self, player):
-        return self.winner[player]
+        return bool(self.winner[player])
 
     def update(self, player, number, ring):
         if ring == 'A' or ring == 'B' or ring == 'C' or ring == 'D':
@@ -68,8 +71,6 @@ class GameAroundTheWorld():
             elif self.score[player] == 5 and number == 20:
                 self.score[player] = number
                 self.winner[player] = True
-            else:
-                self.score[player] = 0
 
         return self.score[player]
 

@@ -16,6 +16,9 @@ class Game501():
         self.score = arr.array('i', [501, 501])
         self.winner = arr.array('b', [False, False])
 
+    def get_num_players(self):
+        return len(self.score)
+
     def set_score(self, player, score):
         self.score[player] = score
 
@@ -23,7 +26,7 @@ class Game501():
         return self.score[player]
 
     def get_winner(self, player):
-        return self.winner[player]
+        return bool(self.winner[player])
 
     def calc_hit(self, number, ring):
         if ring == 'B' or ring == 'D':
@@ -47,10 +50,12 @@ class Game501():
         elif temp_score == 0:
             if ring == 'A':
                 self.winner[player] = True
-                return temp_score
+                self.score[player] = temp_score
+                return self.score[player]
             else:
                 return self.score[player]
         else: # temp_score > 0
-            return temp_score
+            self.score[player] = temp_score
+            return self.score[player]
 
 # EOF
