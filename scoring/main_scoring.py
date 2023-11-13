@@ -23,7 +23,7 @@ class ScoringStateMachine:
     def __init__(self):
         self.state = 'IDLE_START'
         self.transitions = {
-            # Action              Current State   Next state
+            # Action               Current State      Next state
             'start_pressed'    : {'IDLE_START'     : 'START'},
             'create_profile'   : {'START'          : 'CREATE_PROFILE'},
             'play'             : {'START'          : 'WAIT_PLAY'},
