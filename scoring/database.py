@@ -48,10 +48,11 @@ class Database():
                         description text
                     );"""
 
-    number_stats_table =    """CREATE TABLE IF NOT EXISTS number_stats(
+    number_records_table =  """CREATE TABLE IF NOT EXISTS number_records(
+                                id integer PRIMARY KEY AUTOINCREMENT,
+                                date text NOT NULL,
                                 player_id integer,
                                 game_id integer,
-                                date text NOT NULL,
                                 num_1 integer,
                                 num_2 integer,
                                 num_3 integer,
@@ -76,18 +77,19 @@ class Database():
                                 FOREIGN KEY (game_id) REFERENCES games (id)
                             );"""
 
-    ring_stats_table =  """CREATE TABLE IF NOT EXISTS ring_stats(
-                            player_id integer,
-                            game_id integer,
-                            date text NOT NULL,
-                            num_single integer,
-                            num_double integer,
-                            num_triple integer,
-                            num_bull integer,
-                            num_bullseye integer,
-                            FOREIGN KEY (player_id) REFERENCES players (id),
-                            FOREIGN KEY (game_id) REFERENCES games (id)
-                        );"""
+    ring_records_table =    """CREATE TABLE IF NOT EXISTS ring_records(
+                                id integer PRIMARY KEY AUTOINCREMENT,
+                                date text NOT NULL,
+                                player_id integer,
+                                game_id integer,
+                                num_single integer,
+                                num_double integer,
+                                num_triple integer,
+                                num_bull integer,
+                                num_bullseye integer,
+                                FOREIGN KEY (player_id) REFERENCES players (id),
+                                FOREIGN KEY (game_id) REFERENCES games (id)
+                            );"""
 
     def insert_game(self, data):
         sql = '''INSERT INTO games(name, description)
@@ -105,6 +107,22 @@ class Database():
         cursor.execute(sql, data)
         self.connection.commit()
 
+    def insert_number_record(self, data):
+        sql = '''INSERT INTO number_records(date, player_id, game_id, num_1, num_2, num_3, num_4, num_5, num_6, num_7, num_8, num_9, num_10, num_11, num_12, num_13, num_14, num_15, num_16, num_17, num_18, num_19, num_20)
+                 VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+              '''
+        cursor = self.connection.cursor()
+        cursor.execute(sql, data)
+        self.connection.commit()
+
+    def insert_ring_record(self, data):
+        sql = '''INSERT INTO ring_records(date, player_id, game_id, num_single, num_double, num_triple, num_bull, num_bullseye)
+                 VALUES(?, ?, ?, ?, ?, ?, ?, ?)
+              '''
+        cursor = self.connection.cursor()
+        cursor.execute(sql, data)
+        self.connection.commit()
+
     def select_game(self, data):
         sql = 'SELECT id FROM games WHERE name=?'
         cursor = self.connection.cursor()
@@ -117,17 +135,11 @@ class Database():
         cursor.execute(sql, (data,))
         return cursor.fetchone()
 
-    def insert_number_hit(self, data):
-        sql = '''INSERT INTO number_stats(player_id, game_id, date, num_1, num_2, num_3, num_4, num_5, num_6, num_7, num_8, num_9, num_10, num_11, num_12, num_13, num_14, num_15, num_16, num_17, num_18, num_19, num_20)
-                 VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-              '''
-        cursor = self.connection.cursor()
-        cursor.execute(sql, data)
-        self.connection.commit()
-
-    def insert_ring_hit(self, data):
-        sql = '''INSERT INTO ring_stats(player_id, game_id, date, num_single, num_double, num_triple, num_bull, num_bullseye)
-                 VALUES(?, ?, ?, ?, ?, ?, ?, ?)
+    def update_player(self, data):
+        sql = '''UPDATE players
+                 SET num_games = ?,
+                     num_wins = ?
+                 WHERE id = ?
               '''
         cursor = self.connection.cursor()
         cursor.execute(sql, data)

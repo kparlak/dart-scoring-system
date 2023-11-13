@@ -21,20 +21,34 @@ database.connect_database('DARTS.db')
 # Create tables
 # database.create_table(database.players_table)
 # database.create_table(database.games_table)
-# database.create_table(database.ring_stats_table)
-# database.create_table(database.number_stats_table)
+# database.create_table(database.ring_records_table)
+# database.create_table(database.number_records_table)
 
-# Insert games
+# Insert game
 # game = ("501", "Start with score of 501 and reach zero")
 # database.insert_game(game)
 # game = ("Around the World", "Start at 1 and hit numbers sequentially clockwise around the board")
 # database.insert_game(game)
 
-# Insert players
+# Insert player
 # player = ("kevin5176", "Kevin Parlak")
 # database.insert_player(player)
 # player = ("jamie712", "Jamie Parlak")
 # database.insert_player(player)
+
+# Insert number record
+# time = datetime.today().strftime('%Y-%m-%d %H:%M:%S')
+# number_record = (time, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+# database.insert_number_record(number_record)
+# number_record = (time, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+# database.insert_number_record(number_record)
+
+# Insert ring record
+# time = datetime.today().strftime('%Y-%m-%d %H:%M:%S')
+# ring_record = (time, 1, 1, 0, 0, 0, 0, 0)
+# database.insert_ring_record(ring_record)
+# ring_record = (time, 2, 1, 0, 0, 0, 0, 0)
+# database.insert_ring_record(ring_record)
 
 # Select game
 # game = database.select_game("501")
@@ -43,25 +57,15 @@ database.connect_database('DARTS.db')
 # else:
 #     print(game[0])
 
-# Select players
+# Select player
 # player = database.select_player("kevin5176")
 # if player == None:
 #     print('Player does not exist')
 # else:
 #     print(player[0])
 
-# Insert number hits
-# time = datetime.today().strftime('%Y-%m-%d %H:%M:%S')
-# number_hit = (1, 1, time, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
-# database.insert_number_hit(number_hit)
-# number_hit = (2, 1, time, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
-# database.insert_number_hit(number_hit)
-
-# Insert ring hits
-# time = datetime.today().strftime('%Y-%m-%d %H:%M:%S')
-# ring_hit = (1, 1, time, 0, 0, 0, 0, 0)
-# database.insert_ring_hit(ring_hit)
-# ring_hit = (2, 1, time, 0, 0, 0, 0, 0)
-# database.insert_ring_hit(ring_hit)
+# Update player
+# player = (4, 4, 1)
+# database.update_player(player)
 
 # EOF
