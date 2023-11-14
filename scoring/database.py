@@ -15,7 +15,7 @@ class Database():
     def __init__(self):
         pass
 
-    def connect_database(self, file):
+    def connect(self, file):
         self.connection = None
         try:
             self.connection = sqlite3.connect(file)
