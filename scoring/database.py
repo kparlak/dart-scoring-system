@@ -15,7 +15,7 @@ class Database():
     def __init__(self):
         pass
 
-    def connect_database(self, file):
+    def connect(self, file):
         self.connection = None
         try:
             self.connection = sqlite3.connect(file)
@@ -24,6 +24,9 @@ class Database():
             print(error)
 
         return self.connection
+
+    def disconnect(self):
+        self.connection.close()
 
     def create_table(self, table):
         self.cursor = None
@@ -92,55 +95,61 @@ class Database():
                             );"""
 
     def insert_game(self, data):
-        sql = '''INSERT INTO games(name, description)
-                 VALUES(?, ?)
-              '''
+        sql =   '''INSERT INTO games(name, description)
+                    VALUES(?, ?)
+                '''
         cursor = self.connection.cursor()
         cursor.execute(sql, data)
         self.connection.commit()
 
     def insert_player(self, data):
-        sql = '''INSERT INTO players(username, name)
-                 VALUES(?, ?)
-              '''
+        sql =   '''INSERT INTO players(username, name)
+                    VALUES(?, ?)
+                '''
         cursor = self.connection.cursor()
         cursor.execute(sql, data)
         self.connection.commit()
 
     def insert_number_record(self, data):
-        sql = '''INSERT INTO number_records(date, player_id, game_id, num_1, num_2, num_3, num_4, num_5, num_6, num_7, num_8, num_9, num_10, num_11, num_12, num_13, num_14, num_15, num_16, num_17, num_18, num_19, num_20)
-                 VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-              '''
+        sql =   '''INSERT INTO number_records(date, player_id, game_id,
+                    num_1, num_2, num_3, num_4, num_5,
+                    num_6, num_7, num_8, num_9, num_10,
+                    num_11, num_12, num_13, num_14, num_15,
+                    num_16, num_17, num_18, num_19, num_20)
+                    VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                '''
         cursor = self.connection.cursor()
         cursor.execute(sql, data)
         self.connection.commit()
 
     def insert_ring_record(self, data):
-        sql = '''INSERT INTO ring_records(date, player_id, game_id, num_single, num_double, num_triple, num_bull, num_bullseye)
-                 VALUES(?, ?, ?, ?, ?, ?, ?, ?)
-              '''
+        sql =   '''INSERT INTO ring_records(date, player_id, game_id,
+                    num_single, num_double, num_triple,
+                    num_bull, num_bullseye)
+                    VALUES(?, ?, ?, ?, ?, ?, ?, ?)
+                '''
         cursor = self.connection.cursor()
         cursor.execute(sql, data)
         self.connection.commit()
 
     def select_game(self, data):
-        sql = 'SELECT id FROM games WHERE name=?'
+        sql =   'SELECT id FROM games WHERE name=?'
         cursor = self.connection.cursor()
         cursor.execute(sql, (data,))
         return cursor.fetchone()
 
     def select_player(self, data):
-        sql = 'SELECT id FROM players WHERE username=?'
+        sql =   'SELECT * FROM players WHERE username=?'
         cursor = self.connection.cursor()
         cursor.execute(sql, (data,))
-        return cursor.fetchone()
+        return cursor.fetchall()
 
     def update_player(self, data):
-        sql = '''UPDATE players
-                 SET num_games = ?,
-                     num_wins = ?
-                 WHERE id = ?
-              '''
+        sql =   '''UPDATE players
+                    SET num_games = ?,
+                        num_wins = ?
+                    WHERE id = ?
+                '''
         cursor = self.connection.cursor()
         cursor.execute(sql, data)
         self.connection.commit()

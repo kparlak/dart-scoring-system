@@ -13,7 +13,7 @@
 
 ## Setup
 - Follow instructions for setting up the Jetson Nano: [Get Started With Jetson Nano Developer Kit](https://developer.nvidia.com/embedded/learn/get-started-jetson-nano-devkit#intro)
-- Follow instructions for setting up the Jetson Nano case [Jetson Nano Case](https://www.waveshare.com/wiki/Jetson_Nano_Case_(C))
+- Follow instructions for assembling up the Jetson Nano case: [Jetson Nano Case](https://www.waveshare.com/wiki/Jetson_Nano_Case_(C))
 - Install the following:
     - Retarget Python to Python 3.6
         ```
@@ -34,7 +34,7 @@
         sudo pip3 install cython <3
         ```
 - Follow instructions for building Jetson Inference repository from source: [Build the Project from Source](https://github.com/dusty-nv/jetson-inference/blob/master/docs/building-repo-2.md)
-    - Comment out the following from build/install_pytorch.sh
+    - Comment out the following from `build/install_pytorch.sh`
         ```
         pip3 install cython
         ```
@@ -47,7 +47,7 @@
         ```
         sudo pip3 install jetson-stats
         ```
-    - VNC Server - tightvncserver
+    - VNC Server - [tightvncserver](https://www.tightvnc.com/)
         ```
         sudo apt-get install tightvncserver
         ```
@@ -86,14 +86,16 @@
         ```
         10.0.0.3/8
         ```
+    Port `5000` will be used for TCP/IP traffic to [Scoring System](https://github.com/kparlak/dart-scoring-system/tree/main/scoring)
+
 ## Execution
 
 ### Training
-[Jetson Inference](https://github.com/dusty-nv/jetson-inference/tree/master) was used to train custom datasets for dart recognition.
+[Jetson Inference](https://github.com/dusty-nv/jetson-inference/tree/master) was used to train custom datasets for dart recognition:
 - Retraining an SSD model: [Re-Training SSD-Mobilenet](https://github.com/dusty-nv/jetson-inference/blob/master/docs/pytorch-ssd.md)
 - Collecting a custom dataset: [Collecting your own Custom Detection Datasets](https://github.com/dusty-nv/jetson-inference/blob/master/docs/pytorch-collect-detection.md)
 
-### Application:
+### Application
 - Setup environment
         ```
         . setup.sh
