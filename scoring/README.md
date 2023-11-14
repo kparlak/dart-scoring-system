@@ -30,10 +30,18 @@
         ```
         Port `5000` will be used for TCP/IP traffic to [Imaging System](https://github.com/kparlak/dart-scoring-system/tree/main/imaging)
 - Initialize database
-    ```
-    ./initialize_database.py
-    ```
-    This will create an SQLite database at `/data`
+    - Make database directory
+        ```
+        sudo mkdir /data
+        sudo chmod 766 /data
+        ```
+    - Create tables
+        ```
+        ./initialize_database.py
+        ```
+    An SQLite database will be created at `/data/DARTS.db` referencing the entity relationship:
+    ![DARTS Database](documentation/Database_Diagram.png)
+
 ## Execution
 
 ### Application
