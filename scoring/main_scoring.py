@@ -13,11 +13,10 @@ import sys
 sys.path.append('..')
 import constants
 import socket
-import os
 import pickle
+from datetime import datetime
 
 from database import Database
-from datetime import datetime
 from player import Player
 from game_501 import Game501
 from game_around_the_world import GameAroundTheWorld
@@ -85,7 +84,7 @@ class ScoringStateMachine:
 
     def idle_start(self):
         print(self.state)
-        os.system('pause')
+        input('Press start...')
         self.action = 'start_pressed'
 
     def start(self):
@@ -97,7 +96,7 @@ class ScoringStateMachine:
         elif option == 2:
             self.action = 'play'
         else:
-            print('Invalid option')
+            pass
 
     def create_profile(self):
         print(self.state)
@@ -118,30 +117,30 @@ class ScoringStateMachine:
         print(self.state)
         option = int(input('Select Game: (1 - 501, 2 - Around the World) '))
         if option == 1:
+            game_id = self.database.select_game("501")
             self.game = Game501()
-            self.action = 'game_selected'
         elif option == 2:
+            game_id = self.database.select_game("Around the World")
             self.game = GameAroundTheWorld()
-            self.action = 'game_selected'
         else:
-            print('Invalid option')
+            pass
+        self.game_id = game_id[0]
+        self.action = 'game_selected'
 
     def select_players(self):
         print(self.state)
         self.num_players = int(input('Enter number of players: '))
-        # if num_players > self.game.get_num_players():
-        #     print('More players than game allows, defaulting to max')
-        #     num_players = self.game.get_num_players()
-
         for i in range(self.num_players):
             option = int(input('Select players: (1 - Guest, 2 - Load Profile) '))
-
             if option == 1:
-                self.players.append(Player(0))
+                self.players.append(Player())
             elif option == 2:
                 username = input('Enter username: ')
-                id = self.database.select_player(username)
-                self.players.append(Player(id))
+                player = self.database.select_player(username)
+                self.players.append(Player(id=player[0][0],
+                                           name=player[0][1], username=player[0][2],
+                                           num_games=player[0][3], num_wins=player[0][4]))
+                self.players[i].inc_num_games()
             else:
                 pass
             self.action = 'players_selected'
@@ -170,21 +169,32 @@ class ScoringStateMachine:
         print(self.state)
         score = self.game.update(player=self.player_num, number=self.number, ring=self.ring)
         print(score)
-        if self.game.get_winner(player=0) == True:
+        if self.game.get_winner(player=self.player_num) == True:
+            self.players[self.player_num].inc_num_wins()
             self.action = 'winner'
         else:
             self.action = 'no_winner'
 
     def finish_game(self):
         print(self.state)
-
         time = datetime.today().strftime('%Y-%m-%d %H:%M:%S')
-
         for i in range(self.num_players):
-            number_record = (time, 1, 1, *self.players[i].get_number_hits())
-            self.database.insert_number_record(number_record)
-            ring_record = (time, 1, 1, *self.players[i].get_ring_hits())
-            self.database.insert_ring_record(ring_record)
+            player_id = self.players[i].get_id()
+            # Update records if not a guest
+            if player_id != 0:
+                # Update number record table
+                number_hits = self.players[i].get_number_hits()
+                number_record = (time, player_id, self.game_id, *number_hits)
+                self.database.insert_number_record(number_record)
+                # Update ring record table
+                ring_hits = self.players[i].get_ring_hits()
+                ring_record = (time, player_id, self.game_id, *ring_hits)
+                self.database.insert_ring_record(ring_record)
+                # Update player table (games, wins, id)
+                num_games = self.players[i].get_num_games()
+                num_wins = self.players[i].get_num_wins()
+                player = (num_games, num_wins, player_id)
+                self.database.update_player(player)
 
         option = input('Play again? (y or n) ')
         if option == 'Y' or option == 'y':
@@ -192,6 +202,7 @@ class ScoringStateMachine:
         elif option == 'N' or option == 'n':
             self.client.send(constants.DONE_MSG.encode())
             self.client.close()
+            self.database.disconnect()
             self.action = 'not_again'
 
 if __name__ == '__main__':

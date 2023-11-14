@@ -10,8 +10,13 @@
 '''
 
 class Player():
-    def __init__(self, id):
+    def __init__(self, id=0, name='Guest', username='guest', num_games=0, num_wins=0):
         self.id = id
+        self.name = name
+        self.username = username
+        self.num_games = num_games
+        self.num_wins = num_wins
+
         self.num_single = 0
         self.num_double = 0
         self.num_triple = 0
@@ -41,6 +46,18 @@ class Player():
     def get_id(self):
         return self.id
 
+    def get_name(self):
+        return self.name
+
+    def get_username(self):
+        return self.username
+
+    def get_num_games(self):
+        return self.num_games
+
+    def get_num_wins(self):
+        return self.num_wins
+
     def get_ring_hits(self):
         return (self.num_single, self.num_double, self.num_triple,
                 self.num_bull, self.num_bullseye)
@@ -50,6 +67,12 @@ class Player():
                 self.num_6, self.num_7, self.num_8, self.num_9, self.num_10,
                 self.num_11, self.num_12, self.num_13, self.num_14, self.num_15,
                 self.num_16, self.num_17, self.num_18, self.num_19, self.num_20)
+
+    def inc_num_games(self):
+        self.num_games += 1
+
+    def inc_num_wins(self):
+        self.num_wins += 1
 
     def update_ring(self, ring):
         if ring == 'B' or ring == 'D':

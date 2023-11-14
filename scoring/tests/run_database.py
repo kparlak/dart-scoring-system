@@ -31,9 +31,9 @@ database.connect('../DARTS.db')
 # database.insert_game(game)
 
 # Insert player
-# player = ("kevin5176", "Kevin Parlak")
+# player = ("kevin5176", "Kevin Parlak", 0, 0)
 # database.insert_player(player)
-# player = ("jamie712", "Jamie Parlak")
+# player = ("jamie712", "Jamie Parlak", 0, 0)
 # database.insert_player(player)
 
 # Insert number record
@@ -62,7 +62,7 @@ database.connect('../DARTS.db')
 # if player == None:
 #     print('Player does not exist')
 # else:
-#     print(player[0])
+#     print(player[0][1])
 
 # Update player
 # player = (4, 4, 1)
