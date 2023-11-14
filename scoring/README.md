@@ -14,13 +14,17 @@
 - Follow instructions for setting up the Raspberry Pi: [Getting started with your Raspberry Pi](https://www.raspberrypi.com/documentation/computers/getting-started.html)
 - Follow instructions for setting up the FreeNove touchscreen: [Freenove Touchscreen Monitor for Raspberry Pi](https://github.com/Freenove/Freenove_Touchscreen_Monitor_for_Raspberry_Pi)
 - Install the following:
-    - VNC Server - [tightvncserver](https://www.tightvnc.com/)
-        ```
-        sudo apt-get install tightvncserver
-        ```
-        - Start the server
+    - SQLite Browser - [sqlitebrowser](https://snapcraft.io/install/sqlitebrowser/raspbian)
+        - Install snapd
             ```
-            tightvncserver -geometry 1280x720
+            sudo apt update
+            sudo apt install snapd
+            sudo reboot
+            ```
+        - Install application
+            ```
+            sudo snap install core
+            sudo snap install sqlitebrowser
             ```
 - Set IP addresses
     - Configure DHCP to home network using onboard Wi-Fi
@@ -33,7 +37,7 @@
     - Make database directory
         ```
         sudo mkdir /data
-        sudo chmod 766 /data
+        sudo chmod 777 /data
         ```
     - Create tables
         ```
