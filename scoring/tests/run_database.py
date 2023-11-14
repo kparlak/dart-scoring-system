@@ -16,7 +16,7 @@ from database import Database
 from datetime import datetime
 
 database = Database()
-database.connect_database('DARTS.db')
+database.connect('../DARTS.db')
 
 # Create tables
 # database.create_table(database.players_table)
