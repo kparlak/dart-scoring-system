@@ -46,9 +46,9 @@
 
 ### Application
 - Start state machine
-        ```
-        ./main_scoring.py
-        ```
+    ```
+    ./main_scoring.py
+    ```
 
 ## License
 MIT

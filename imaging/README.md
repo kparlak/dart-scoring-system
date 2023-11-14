@@ -97,13 +97,13 @@
 
 ### Application
 - Setup environment
-        ```
-        . setup.sh
-        ```
+    ```
+    . setup.sh
+    ```
 - Start state machine
-        ```
-        ./main_imaging.py
-        ```
+    ```
+    ./main_imaging.py
+    ```
 
 ## License
 MIT
