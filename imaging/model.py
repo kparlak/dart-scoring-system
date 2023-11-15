@@ -10,6 +10,7 @@
 '''
 
 import os
+
 from jetson_inference import detectNet
 from jetson_utils import videoSource, videoOutput
 
@@ -34,30 +35,24 @@ class Model():
     def get_network(self):
         return self.network
 
-    def find_bull(self):
+    def detect(self, id=0):
         while True:
+            # Capture image
             img = self.source.Capture()
-
             if img is None:
                 continue
-
+            # Run image through detection network
             detections = self.network.Detect(img)
-
             for detection in detections:
-                if detection.ClassID == 1:
-                    return detection.Center[0], detection.Center[1]
+                if detection.ClassID == id:
+                    return detection
 
-    def find_dart(self):
-        while True:
-            img = self.source.Capture()
+    def detect_bull(self):
+        detection = self.detect(id=1)
+        return detection.Center[0], detection.Center[1]
 
-            if img is None:
-                continue
-
-            detections = self.network.Detect(img)
-
-            for detection in detections:
-                if detection.ClassID == 2:
-                    return detection.Left, detection.Bottom
+    def detect_dart(self):
+        detection = self.detect(id=2)
+        return detection.Left, detection.Bottom
 
 # EOF
