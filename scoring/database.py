@@ -12,18 +12,15 @@
 import sqlite3
 
 class Database():
-    def __init__(self):
+    def __init__(self) -> None:
         pass
 
     def connect(self, file):
         self.connection = None
         try:
             self.connection = sqlite3.connect(file)
-
         except sqlite3.Error as error:
             print(error)
-
-        return self.connection
 
     def disconnect(self):
         self.connection.close()
@@ -33,7 +30,6 @@ class Database():
         try:
             self.cursor = self.connection.cursor()
             self.cursor.execute(table)
-
         except sqlite3.Error as e:
             print(e)
 

@@ -44,6 +44,6 @@ while model.get_display().IsStreaming():
 
         print()
 
-        time.sleep(1)
+        time.sleep(0.1)
 
 # EOF

@@ -12,7 +12,7 @@
 import array as arr
 
 class Game501():
-    def __init__(self):
+    def __init__(self) -> None:
         self.score = arr.array('i', [501, 501])
         self.winner = arr.array('b', [False, False])
 
@@ -48,7 +48,7 @@ class Game501():
         if temp_score < 0:
             return self.score[player]
         elif temp_score == 0:
-            if ring == 'A':
+            if ring == 'A' or number == 1:
                 self.winner[player] = True
                 self.score[player] = temp_score
                 return self.score[player]

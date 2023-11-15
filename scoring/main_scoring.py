@@ -11,10 +11,11 @@
 
 import sys
 sys.path.append('..')
-import constants
 import socket
 import pickle
 from datetime import datetime
+
+import constants
 
 from database import Database
 from player import Player
@@ -22,7 +23,7 @@ from game_501 import Game501
 from game_around_the_world import GameAroundTheWorld
 
 class ScoringStateMachine:
-    def __init__(self):
+    def __init__(self) -> None:
         self.state = 'IDLE_START'
         self.transitions = {
             # Action               Current State      Next state
@@ -50,6 +51,9 @@ class ScoringStateMachine:
         self.client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         server_address = (constants.IP_ADDRESS, constants.PORT)
         self.client.connect(server_address)
+
+    def disconnect(self):
+        self.client.close()
 
     def get_action(self):
         return self.action
@@ -81,6 +85,8 @@ class ScoringStateMachine:
             self.update_game()
         elif self.state == 'FINISH_GAME':
             self.finish_game()
+        else:
+            pass
 
     def idle_start(self):
         print(self.state)
@@ -108,13 +114,16 @@ class ScoringStateMachine:
 
     def wait_play(self):
         print(self.state)
+        # Connect to imaging system
         self.connect()
+        # Wait for ready message from imaging system
         data = self.client.recv(constants.BUFFER_SIZE).decode()
-        if (data == constants.READY_MSG):
+        if data == constants.READY_MSG:
             self.action = 'ready_msg_rxd'
 
     def select_game(self):
         print(self.state)
+        # Select game
         option = int(input('Select Game: (1 - 501, 2 - Around the World) '))
         if option == 1:
             game_id = self.database.select_game("501")
@@ -129,6 +138,7 @@ class ScoringStateMachine:
 
     def select_players(self):
         print(self.state)
+        # Select players
         self.num_players = int(input('Enter number of players: '))
         for i in range(self.num_players):
             option = int(input('Select players: (1 - Guest, 2 - Load Profile) '))
@@ -147,16 +157,19 @@ class ScoringStateMachine:
 
     def idle_turn(self):
         print(self.state)
+        # Select profile
         self.player_num = int(input('Select player: '))
         self.action = 'profile_selected'
 
     def new_dart(self):
         print(self.state)
+        # Send look message to imaging system
         self.client.send(constants.LOOK_MSG.encode())
         self.action = 'look_msg_txd'
 
     def wait_dart(self):
         print(self.state)
+        # Wait for location message from imaging system
         data = self.client.recv(constants.BUFFER_SIZE)
         constants.MSG = pickle.loads(data)
         self.number = constants.MSG["number"]
@@ -167,6 +180,7 @@ class ScoringStateMachine:
 
     def update_game(self):
         print(self.state)
+        # Update game scores
         score = self.game.update(player=self.player_num, number=self.number, ring=self.ring)
         print(score)
         if self.game.get_winner(player=self.player_num) == True:
@@ -178,9 +192,9 @@ class ScoringStateMachine:
     def finish_game(self):
         print(self.state)
         time = datetime.today().strftime('%Y-%m-%d %H:%M:%S')
+        # Update records if not a guest
         for i in range(self.num_players):
             player_id = self.players[i].get_id()
-            # Update records if not a guest
             if player_id != 0:
                 # Update number record table
                 number_hits = self.players[i].get_number_hits()
