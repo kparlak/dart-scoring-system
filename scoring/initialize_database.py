@@ -13,7 +13,7 @@ from database import Database
 
 database = Database()
 
-database.connect('/data/DARTS.db')
+database.connect('DARTS.db')
 
 # Create tables
 database.create_table(database.players_table)
