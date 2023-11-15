@@ -11,9 +11,10 @@
 
 import sys
 sys.path.append("..")
-import constants
 import socket
 import pickle
+
+import constants
 
 from dartboard import Dartboard
 from model import Model
@@ -68,7 +69,7 @@ class ImagingStateMachine:
         # Connect to scoring system
         self.connect()
         # Detect bull
-        x0, y0 = self.model.find_bull()
+        x0, y0 = self.model.detect_bull()
         # Set dartboard center
         self.dartboard.set_center(x=x0, y=y0)
         # Send message to scoring system
@@ -90,7 +91,7 @@ class ImagingStateMachine:
     def find_dart(self):
         print(self.state)
         # Detect dart
-        self.x, self.y = self.model.find_dart()
+        self.x, self.y = self.model.detect_dart()
         self.action = 'dart_found'
 
     def map_dart(self):
