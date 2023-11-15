@@ -14,6 +14,10 @@
 - Follow instructions for setting up the Raspberry Pi: [Getting started with your Raspberry Pi](https://www.raspberrypi.com/documentation/computers/getting-started.html)
 - Follow instructions for setting up the FreeNove touchscreen: [Freenove Touchscreen Monitor for Raspberry Pi](https://github.com/Freenove/Freenove_Touchscreen_Monitor_for_Raspberry_Pi)
 - Install the following:
+    - Python package - [pyqt5](https://pypi.org/project/PyQt5/)
+        ```
+        sudo pip install pyqt5
+        ```
     - Database Browser - [sqlitebrowser](https://snapcraft.io/install/sqlitebrowser/raspbian)
         ```
         sudo apt update
