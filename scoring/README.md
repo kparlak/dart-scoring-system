@@ -14,25 +14,21 @@
 - Follow instructions for setting up the Raspberry Pi: [Getting started with your Raspberry Pi](https://www.raspberrypi.com/documentation/computers/getting-started.html)
 - Follow instructions for setting up the FreeNove touchscreen: [Freenove Touchscreen Monitor for Raspberry Pi](https://github.com/Freenove/Freenove_Touchscreen_Monitor_for_Raspberry_Pi)
 - Install the following:
-    - SQLite Browser - [sqlitebrowser](https://snapcraft.io/install/sqlitebrowser/raspbian)
-        - Install snapd
-            ```
-            sudo apt update
-            sudo apt install snapd
-            sudo reboot
-            ```
-        - Install application
-            ```
-            sudo snap install core
-            sudo snap install sqlitebrowser
-            ```
+    - Database Browser - [sqlitebrowser](https://snapcraft.io/install/sqlitebrowser/raspbian)
+        ```
+        sudo apt update
+        sudo apt install snapd
+        sudo reboot
+        sudo snap install core
+        sudo snap install sqlitebrowser
+        ```
 - Set IP addresses
     - Configure DHCP to home network using onboard Wi-Fi
     - Set local Ethernet to static IP address
         ```
         10.0.0.2/8
         ```
-        Port `5000` will be used for TCP/IP traffic to [Imaging System](https://github.com/kparlak/dart-scoring-system/tree/main/imaging)
+        Port `5000` will be used for TCP/IP traffic to the [Imaging System](https://github.com/kparlak/dart-scoring-system/tree/main/imaging)
 - Initialize database
     - Make database directory
         ```

@@ -15,7 +15,7 @@
 - Follow instructions for setting up the Jetson Nano: [Get Started With Jetson Nano Developer Kit](https://developer.nvidia.com/embedded/learn/get-started-jetson-nano-devkit#intro)
 - Follow instructions for assembling up the Jetson Nano case: [Jetson Nano Case](https://www.waveshare.com/wiki/Jetson_Nano_Case_(C))
 - Install the following:
-    - Retarget Python to Python 3.6
+    - Retarget Python to Python 3
         ```
         cd /usr/bin
         sudo rm python
@@ -33,13 +33,15 @@
         ```
         sudo pip3 install cython <3
         ```
-- Follow instructions for building Jetson Inference repository from source: [Build the Project from Source](https://github.com/dusty-nv/jetson-inference/blob/master/docs/building-repo-2.md)
-    - Comment out the following from `build/install_pytorch.sh`
+    - Python package - [open-cv](https://pypi.org/project/opencv-python/)
         ```
-        pip3 install cython
+        sudo pip install opencv-python
         ```
-- Install third-party applications
-    - Text Editor - GNU nano
+    - Python package - [numpy](https://pypi.org/project/numpy/)
+        ```
+        sudo pip install numpy
+        ```
+    - Text Editor - [GNU nano](https://www.nano-editor.org/)
         ```
         sudo apt-get install nano
         ```
@@ -51,13 +53,10 @@
         ```
         sudo apt-get install tightvncserver
         ```
-    - Open Computer Vision - [open-cv](https://pypi.org/project/opencv-python/)
+- Follow instructions for building Jetson Inference repository from source: [Build the Project from Source](https://github.com/dusty-nv/jetson-inference/blob/master/docs/building-repo-2.md)
+    - Comment out the following from `build/install_pytorch.sh`
         ```
-        sudo pip install opencv-python
-        ```
-    - Array Computing - [numpy](https://pypi.org/project/numpy/)
-        ```
-        sudo pip install numpy
+        pip3 install cython
         ```
 - Enable fan output
     - Create execution script
@@ -86,7 +85,7 @@
         ```
         10.0.0.3/8
         ```
-    Port `5000` will be used for TCP/IP traffic to [Scoring System](https://github.com/kparlak/dart-scoring-system/tree/main/scoring)
+    Port `5000` will be used for TCP/IP traffic to the [Scoring System](https://github.com/kparlak/dart-scoring-system/tree/main/scoring)
 
 ## Execution
 
