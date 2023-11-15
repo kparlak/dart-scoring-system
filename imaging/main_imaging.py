@@ -36,6 +36,7 @@ class ImagingStateMachine:
 
     def connect(self):
         self.server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.server_address = (constants.IP_ADDRESS, constants.PORT)
         self.server.bind(self.server_address)
         self.server.listen(constants.NUM_CONNECTIONS)
