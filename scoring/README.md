@@ -14,26 +14,26 @@
 - Follow instructions for setting up the Raspberry Pi: [Getting started with your Raspberry Pi](https://www.raspberrypi.com/documentation/computers/getting-started.html)
 - Follow instructions for setting up the FreeNove touchscreen: [Freenove Touchscreen Monitor for Raspberry Pi](https://github.com/Freenove/Freenove_Touchscreen_Monitor_for_Raspberry_Pi)
 - Install the following:
-    - VNC Server - [tightvncserver](https://www.tightvnc.com/)
+    - Database Browser - [sqlitebrowser](https://snapcraft.io/install/sqlitebrowser/raspbian)
         ```
-        sudo apt-get install tightvncserver
+        sudo apt update
+        sudo apt install snapd
+        sudo reboot
+        sudo snap install core
+        sudo snap install sqlitebrowser
         ```
-        - Start the server
-            ```
-            tightvncserver -geometry 1280x720
-            ```
 - Set IP addresses
     - Configure DHCP to home network using onboard Wi-Fi
     - Set local Ethernet to static IP address
         ```
         10.0.0.2/8
         ```
-        Port `5000` will be used for TCP/IP traffic to [Imaging System](https://github.com/kparlak/dart-scoring-system/tree/main/imaging)
+        Port `5000` will be used for TCP/IP traffic to the [Imaging System](https://github.com/kparlak/dart-scoring-system/tree/main/imaging)
 - Initialize database
     - Make database directory
         ```
         sudo mkdir /data
-        sudo chmod 766 /data
+        sudo chmod 777 /data
         ```
     - Create tables
         ```
@@ -46,9 +46,9 @@
 
 ### Application
 - Start state machine
-        ```
-        ./main_scoring.py
-        ```
+    ```
+    ./main_scoring.py
+    ```
 
 ## License
 MIT
