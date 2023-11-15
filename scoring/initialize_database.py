@@ -27,4 +27,6 @@ database.insert_game(game)
 game = ("Around the World", "Knockout based game where the player starts at 1 and must hit numbers sequentially in clockwise order around the board")
 database.insert_game(game)
 
+database.disconnect()
+
 # EOF

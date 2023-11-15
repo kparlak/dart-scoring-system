@@ -18,18 +18,6 @@ from datetime import datetime
 database = Database()
 database.connect('../DARTS.db')
 
-# Create tables
-# database.create_table(database.players_table)
-# database.create_table(database.games_table)
-# database.create_table(database.ring_records_table)
-# database.create_table(database.number_records_table)
-
-# Insert game
-# game = ("501", "Start with score of 501 and reach zero")
-# database.insert_game(game)
-# game = ("Around the World", "Start at 1 and hit numbers sequentially clockwise around the board")
-# database.insert_game(game)
-
 # Insert player
 # player = ("kevin5176", "Kevin Parlak", 0, 0)
 # database.insert_player(player)
@@ -67,5 +55,7 @@ database.connect('../DARTS.db')
 # Update player
 # player = (4, 4, 1)
 # database.update_player(player)
+
+database.disconnect()
 
 # EOF
