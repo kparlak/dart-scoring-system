@@ -9,8 +9,8 @@
 @Desc    :   Class for dartboard logic
 '''
 
-import numpy as np
 import math
+import numpy as np
 
 class Dartboard:
     def __init__(self) -> None:
@@ -48,6 +48,7 @@ class Dartboard:
 
     def translate_pos(self, x, y):
         point = np.array([x, y, 1])
+        # Compute homographic dot product
         new_point = np.dot(self.H, point)
         new_point = new_point / new_point[2]
         return new_point
@@ -57,29 +58,6 @@ class Dartboard:
         center = self.translate_pos(x, y)
         self.x0 = x * self.factor
         self.y0 = center[1] * self.factor
-
-    def calc_radius(self, x, y):
-        return math.sqrt(math.pow(x, 2) + math.pow(y, 2))
-
-    def map_ring(self, radius):
-        if radius >= 162 and radius < 170:
-            return 'A'
-        elif radius >= 107 and radius < 162:
-            return 'B'
-        elif radius >= 99 and radius < 107:
-            return 'C'
-        elif radius >= 16 and radius < 99:
-            return 'D'
-        elif radius >= 6.35 and radius < 16:
-            return 'X'
-        elif radius >= 0 and radius < 6.35:
-            return 'Y'
-        else:
-            return 'Z'
-
-    def update_ring(self, x, y):
-        self.radius = self.calc_radius(x, y)
-        return self.map_ring(radius=self.radius)
 
     def calc_theta(self, x, y):
         # Compute quadrant for calculation
@@ -97,6 +75,7 @@ class Dartboard:
         return math.degrees(theta)
 
     def map_number(self, theta):
+        # Apply standard dartboard angles in degrees to determine number hit
         if (theta >= 351 and theta <= 360) or (theta >= 0 and theta < 9):
             return 20
         elif theta >= 9 and theta < 27:
@@ -144,17 +123,43 @@ class Dartboard:
         self.theta = self.calc_theta(x, y)
         return self.map_number(self.theta)
 
+    def calc_radius(self, x, y):
+        return math.sqrt(math.pow(x, 2) + math.pow(y, 2))
+
+    def map_ring(self, radius):
+        # Apply standard dartboard radii in mm to determine ring hit
+        if radius >= 162 and radius < 170:
+            return 'A'
+        elif radius >= 107 and radius < 162:
+            return 'B'
+        elif radius >= 99 and radius < 107:
+            return 'C'
+        elif radius >= 16 and radius < 99:
+            return 'D'
+        elif radius >= 6.35 and radius < 16:
+            return 'X'
+        elif radius >= 0 and radius < 6.35:
+            return 'Y'
+        else:
+            return 'Z'
+
+    def update_ring(self, x, y):
+        self.radius = self.calc_radius(x, y)
+        return self.map_ring(radius=self.radius)
+
     def update(self, x, y):
         # Translate position
         pos = self.translate_pos(x, y)
-        self.pos_x = x * self.factor
+        self.pos_x = x * self.factor # x location is lateral to projection frame
         self.pos_y = pos[1] * self.factor
         # Calculate distance from center
         self.dist_x = self.pos_x - self.x0
         self.dist_y = self.y0 - self.pos_y
+        # Update number and ring hit
         number = self.update_number(self.dist_x, self.dist_y)
         ring = self.update_ring(self.dist_x, self.dist_y)
-        if ring == 'X' or ring == 'Y' or ring == 'Z':
+        # Void number if hit is outside dartboard
+        if ring == 'Z':
             number = 0
         return number, ring
 
