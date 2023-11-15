@@ -103,8 +103,8 @@ class Database():
         self.connection.commit()
 
     def insert_player(self, data):
-        sql =   '''INSERT INTO players(username, name)
-                    VALUES(?, ?)
+        sql =   '''INSERT INTO players(username, name, num_games, num_wins)
+                    VALUES(?, ?, 0, 0)
                 '''
         cursor = self.connection.cursor()
         cursor.execute(sql, data)
