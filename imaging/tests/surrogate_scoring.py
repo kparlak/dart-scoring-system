@@ -11,9 +11,10 @@
 
 import sys
 sys.path.append("../..")
-import constants
 import socket
 import pickle
+
+import constants
 
 while True:
     input('Press enter to connect...')
