@@ -21,6 +21,6 @@ DONE_MSG = "DONE"
 TEST_MSG = "TEST"
 
 # Data message
-MSG = {"number": 0, "ring": 'A', "radius": 0.0, "theta": 0.0}
+MSG = {"number": 0, "ring": 'Z', "radius": 0.0, "theta": 0.0}
 
 # EOF

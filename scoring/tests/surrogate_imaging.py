@@ -11,37 +11,40 @@
 
 import sys
 sys.path.append("../..")
-import constants
 import socket
 import pickle
 
-# Create connection
-server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-server_address = (constants.IP_ADDRESS, constants.PORT)
-server.bind(server_address)
-server.listen(constants.NUM_CONNECTIONS)
+import constants
 
 while True:
-    print('Waiting for connection...')
+    # Create connection
+    server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    server_address = (constants.IP_ADDRESS, constants.PORT)
+    server.bind(server_address)
+    server.listen(constants.NUM_CONNECTIONS)
+    print("Waiting for connection...")
     client, address = server.accept()
 
-    print('Sending ready message')
     client.send(constants.READY_MSG.encode())
+    print("Sent READY message")
 
     while True:
+        print("Waiting on LOOK message")
         data = client.recv(constants.BUFFER_SIZE).decode()
         if data == constants.LOOK_MSG:
-            print('LOOK message received, sending location')
             number = int(input('Number of hit: '))
             constants.MSG["number"] = number
             ring = input('Ring of hit: ')
             constants.MSG["ring"] = ring
             data = pickle.dumps(constants.MSG, protocol=2)
             client.sendall(data)
+            print("Sent LOCATION message")
         elif data == constants.DONE_MSG:
-            print('DONE message received, disconnecting')
+            print("Received DONE message, disconnecting")
+            server.close()
+            client.close()
             break
-        # else:
-        #     print('Message not recognized')
+        else:
+            pass
 
 # EOF

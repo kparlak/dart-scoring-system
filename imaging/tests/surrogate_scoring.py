@@ -26,9 +26,7 @@ while True:
     print("Waiting on READY message")
     data = client.recv(constants.BUFFER_SIZE).decode()
     if data == constants.READY_MSG:
-        print('Received READY message')
-    else:
-        pass
+        print("Received READY message")
 
     while True:
         option = int(input('Send LOOK message (1), send DONE message (2) '))
@@ -40,6 +38,8 @@ while True:
             client.close()
             print("Sent DONE message")
             break
+        else:
+            pass
 
         print("Waiting on LOCATION message")
         data = client.recv(constants.BUFFER_SIZE)

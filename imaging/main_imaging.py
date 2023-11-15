@@ -13,6 +13,7 @@ import sys
 sys.path.append("..")
 import socket
 import pickle
+import time
 
 import constants
 
@@ -84,6 +85,7 @@ class ImagingStateMachine:
             self.action = 'look_msg_rxd'
         elif msg == constants.DONE_MSG:
             self.disconnect()
+            time.sleep(0.1)
             self.action = 'done_msg_rxd'
         else:
             pass
