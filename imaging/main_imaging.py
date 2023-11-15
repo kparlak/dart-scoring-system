@@ -72,13 +72,13 @@ class ImagingStateMachine:
         x0, y0 = self.model.detect_bull()
         # Set dartboard center
         self.dartboard.set_center(x=x0, y=y0)
-        # Send message to scoring system
+        # Send ready message to scoring system
         self.client.send(constants.READY_MSG.encode())
         self.action = 'ready_msg_txd'
 
     def wait_throw(self):
         print(self.state)
-        # Wait for message from scoring system
+        # Wait for look or done message from scoring system
         msg = self.client.recv(constants.BUFFER_SIZE).decode()
         if msg == constants.LOOK_MSG:
             self.action = 'look_msg_rxd'

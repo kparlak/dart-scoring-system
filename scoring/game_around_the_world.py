@@ -12,7 +12,7 @@
 import array as arr
 
 class GameAroundTheWorld():
-    def __init__(self):
+    def __init__(self) -> None:
         self.score = arr.array('i', [0, 0])
         self.winner = arr.array('b', [False, False])
 
@@ -71,7 +71,8 @@ class GameAroundTheWorld():
             elif self.score[player] == 5 and number == 20:
                 self.score[player] = number
                 self.winner[player] = True
-
+            else:
+                pass
         return self.score[player]
 
 # EOF

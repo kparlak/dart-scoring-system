@@ -11,16 +11,9 @@
 
 import sys
 sys.path.append("../..")
-import signal
 import constants
 import socket
 import pickle
-
-def signal_handler(sig, frame):
-    server.close()
-    exit(0)
-
-signal.signal(signal.SIGINT, signal_handler)
 
 # Create connection
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
