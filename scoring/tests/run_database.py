@@ -19,9 +19,9 @@ database = Database()
 database.connect('../DARTS.db')
 
 # Insert player
-# player = ("kevin5176", "Kevin Parlak", 0, 0)
+# player = ("Kevin Parlak", "kevin5176")
 # database.insert_player(player)
-# player = ("jamie712", "Jamie Parlak", 0, 0)
+# player = ("Jamie Parlak", "jamie712")
 # database.insert_player(player)
 
 # Insert number record

@@ -99,7 +99,7 @@ class Database():
         self.connection.commit()
 
     def insert_player(self, data):
-        sql =   '''INSERT INTO players(username, name, num_games, num_wins)
+        sql =   '''INSERT INTO players(name, username, num_games, num_wins)
                     VALUES(?, ?, 0, 0)
                 '''
         cursor = self.connection.cursor()

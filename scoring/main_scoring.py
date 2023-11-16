@@ -108,7 +108,7 @@ class ScoringStateMachine:
         print(self.state)
         name = input('Enter name: ')
         username = input('Enter username: ')
-        player = (username, name)
+        player = (name, username)
         self.database.insert_player(player)
         self.action = 'profile_created'
 
