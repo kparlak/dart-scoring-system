@@ -60,6 +60,9 @@ class Ui_SelectPlayersDisplay(object):
         font.setPointSize(10)
         self.playersLabel.setFont(font)
         self.playersLabel.setObjectName("playersLabel")
+        self.playButton = QtWidgets.QPushButton(self.centralwidget)
+        self.playButton.setGeometry(QtCore.QRect(300, 20, 200, 100))
+        self.playButton.setObjectName("playButton")
         SelectPlayersDisplay.setCentralWidget(self.centralwidget)
 
         self.retranslateUi(SelectPlayersDisplay)
@@ -75,6 +78,7 @@ class Ui_SelectPlayersDisplay(object):
         self.guestButton.setText(_translate("SelectPlayersDisplay", "Guest"))
         self.selectGameButton.setText(_translate("SelectPlayersDisplay", "Select Game"))
         self.playersLabel.setText(_translate("SelectPlayersDisplay", "Players"))
+        self.playButton.setText(_translate("SelectPlayersDisplay", "Play"))
 
 
 if __name__ == "__main__":
