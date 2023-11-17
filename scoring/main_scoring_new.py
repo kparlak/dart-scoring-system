@@ -28,9 +28,7 @@ from player import Player
 from game_501 import Game501
 from game_around_the_world import GameAroundTheWorld
 
-database = Database()
-database.connect('DARTS.db')
-# TODO : Adjust state machine diagram for scoring system
+database = Database('DARTS.db')
 
 # Globals
 game = None

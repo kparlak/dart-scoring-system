@@ -45,7 +45,7 @@ class ScoringStateMachine:
         }
         self.players = []
         self.player_num = 0
-        self.database = Database()
+        self.database = Database('DARTS.db')
 
     def connect(self):
         self.client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -95,7 +95,6 @@ class ScoringStateMachine:
 
     def start(self):
         print(self.state)
-        self.database.connect('DARTS.db')
         option = int(input('Create profile (1) or play (2) '))
         if option == 1:
             self.action = 'create_profile'
@@ -216,7 +215,6 @@ class ScoringStateMachine:
         elif option == 'N' or option == 'n':
             self.client.send(constants.DONE_MSG.encode())
             self.client.close()
-            self.database.disconnect()
             self.action = 'not_again'
 
 if __name__ == '__main__':

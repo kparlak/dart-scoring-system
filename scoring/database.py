@@ -12,17 +12,14 @@
 import sqlite3
 
 class Database():
-    def __init__(self) -> None:
-        pass
-
-    def connect(self, file):
+    def __init__(self, file):
         self.connection = None
         try:
             self.connection = sqlite3.connect(file)
         except sqlite3.Error as error:
             print(error)
 
-    def disconnect(self):
+    def __del__(self):
         self.connection.close()
 
     def create_table(self, table):

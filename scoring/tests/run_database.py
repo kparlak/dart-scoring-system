@@ -15,8 +15,7 @@ sys.path.append("..")
 from database import Database
 from datetime import datetime
 
-database = Database()
-database.connect('../DARTS.db')
+database = Database('../DARTS.db')
 
 # Insert player
 # player = ("Kevin Parlak", "kevin5176")
@@ -55,7 +54,5 @@ database.connect('../DARTS.db')
 # Update player
 # player = (4, 4, 1)
 # database.update_player(player)
-
-database.disconnect()
 
 # EOF
