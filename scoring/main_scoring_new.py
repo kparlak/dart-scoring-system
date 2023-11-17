@@ -145,11 +145,9 @@ class SelectPlayersDisplay(QMainWindow, Ui_SelectPlayersDisplay):
 
     def load_button(self):
         global num_players
-        if num_players == max_players - 1:
-            self.loadButton.setEnabled(False)
-            self.guestButton.setEnabled(False)
         username = self.usernameInput.toPlainText()
         player = database.select_player(username)
+        # Load profile if valid username
         if len(player) == 0:
             self.errorBox.setText('Bad username')
             self.errorBox.exec()
@@ -159,19 +157,24 @@ class SelectPlayersDisplay(QMainWindow, Ui_SelectPlayersDisplay):
                                   num_games=player[0][3], num_wins=player[0][4]))
             num_players += 1
             output = 'Player ' + str(num_players) + ': ' + players[num_players - 1].get_username() +'\n'
-            print(players[num_players - 1].get_username())
             self.playersOutput.insertPlainText(output)
             self.usernameInput.clear()
+            # Disable buttosn if max number of players
+            if num_players == max_players:
+                self.loadButton.setEnabled(False)
+                self.guestButton.setEnabled(False)
 
     def guest_button(self):
         global num_players
-        if num_players == max_players - 1:
-            self.guestButton.setEnabled(False)
-            self.loadButton.setEnabled(False)
         players.append(Player())
         num_players += 1
         output = 'Player ' + str(num_players) + ': ' + players[num_players - 1].get_username() + '\n'
         self.playersOutput.insertPlainText(output)
+        # Disable buttons if max number of players
+        if num_players == max_players:
+            self.guestButton.setEnabled(False)
+            self.loadButton.setEnabled(False)
+
 
     def play_button(self):
         # TODO : Connect to imaging system
