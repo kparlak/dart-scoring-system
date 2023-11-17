@@ -10,13 +10,16 @@
 '''
 
 class Player():
-    def __init__(self, id=0, name='Guest', username='guest', num_games=0, num_wins=0):
+    def __init__(self, id=0, name='Guest', username='guest', num_throws=0, num_games=0, num_wins=0):
         self.id = id
         self.name = name
         self.username = username
+        self.num_throws = num_throws
         self.num_games = num_games
         self.num_wins = num_wins
+        self.reset()
 
+    def reset(self):
         self.num_single = 0
         self.num_double = 0
         self.num_triple = 0
@@ -52,6 +55,9 @@ class Player():
     def get_username(self):
         return self.username
 
+    def get_num_throws(self):
+        return self.num_throws
+
     def get_num_games(self):
         return self.num_games
 
@@ -67,6 +73,9 @@ class Player():
                 self.num_6, self.num_7, self.num_8, self.num_9, self.num_10,
                 self.num_11, self.num_12, self.num_13, self.num_14, self.num_15,
                 self.num_16, self.num_17, self.num_18, self.num_19, self.num_20)
+
+    def inc_num_throws(self):
+        self.num_throws += 1
 
     def inc_num_games(self):
         self.num_games += 1

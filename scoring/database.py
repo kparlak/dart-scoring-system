@@ -34,6 +34,7 @@ class Database():
                         id integer PRIMARY KEY AUTOINCREMENT,
                         name text NOT NULL,
                         username text NOT NULL,
+                        num_throws integer,
                         num_games integer,
                         num_wins integer
                     );"""
@@ -96,8 +97,8 @@ class Database():
         self.connection.commit()
 
     def insert_player(self, data):
-        sql =   '''INSERT INTO players(name, username, num_games, num_wins)
-                    VALUES(?, ?, 0, 0)
+        sql =   '''INSERT INTO players(name, username, num_throws, num_games, num_wins)
+                    VALUES(?, ?, 0, 0, 0)
                 '''
         cursor = self.connection.cursor()
         cursor.execute(sql, data)
@@ -139,7 +140,8 @@ class Database():
 
     def update_player(self, data):
         sql =   '''UPDATE players
-                    SET num_games = ?,
+                    SET num_throws = ?,
+                        num_games = ?,
                         num_wins = ?
                     WHERE id = ?
                 '''
