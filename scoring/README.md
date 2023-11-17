@@ -14,9 +14,13 @@
 - Follow instructions for setting up the Raspberry Pi: [Getting started with your Raspberry Pi](https://www.raspberrypi.com/documentation/computers/getting-started.html)
 - Follow instructions for setting up the FreeNove touchscreen: [Freenove Touchscreen Monitor for Raspberry Pi](https://github.com/Freenove/Freenove_Touchscreen_Monitor_for_Raspberry_Pi)
 - Install the following:
-    - Python package - [pyqt5](https://pypi.org/project/PyQt5/)
+    - Python package - [PyQt5](https://pypi.org/project/PyQt5/)
         ```
-        sudo pip install pyqt5
+        sudo pip install PyQt5
+        ```
+    - Python package - [pyqt5-tools](https://pypi.org/project/pyqt5-tools/)
+        ```
+        sudo pip install pyqt5-tools
         ```
     - Database Browser - [sqlitebrowser](https://snapcraft.io/install/sqlitebrowser/raspbian)
         ```
@@ -49,6 +53,10 @@
 ## Execution
 
 ### Application
+- Generate python files from Qt ui files
+    ```
+    python -m PyQt5.uic.pyuic <file.ui> -o <file.py> -x
+    ```
 - Start state machine
     ```
     ./main_scoring.py
