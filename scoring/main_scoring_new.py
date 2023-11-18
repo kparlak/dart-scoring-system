@@ -16,7 +16,7 @@ import socket
 import constants
 
 from PyQt5.QtWidgets import QApplication, QMainWindow, QMessageBox
-from PyQt5.QtGui import QMovie
+from PyQt5.QtGui import QIcon, QPixmap, QMovie
 
 from ui.idle_start_display import Ui_IdleStartDisplay
 from ui.start_display import Ui_StartDisplay
@@ -37,6 +37,11 @@ players = []
 num_players = 0
 max_players = 0
 
+class Icon(QIcon):
+    def __init__(self, parent=None):
+        super(Icon, self).__init__(parent)
+        self.addPixmap(QPixmap("ui/DARTS.png"), QIcon.Normal, QIcon.Off)
+
 class HelpBox(QMessageBox):
     def __init__(self, parent=None):
         super(HelpBox, self).__init__(parent)
@@ -50,6 +55,8 @@ class ErrorBox(QMessageBox):
 class IdleStartDisplay(QMainWindow, Ui_IdleStartDisplay):
     def __init__(self, parent=None):
         super(IdleStartDisplay, self).__init__(parent)
+        self.icon = Icon()
+        self.setWindowIcon(self.icon)
         self.setupUi(self)
         self.movie = QMovie("ui/DARTS_Startup_Resized.gif")
         self.movieLabel.setMovie(self.movie)

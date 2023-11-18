@@ -15,9 +15,6 @@ class Ui_IdleStartDisplay(object):
     def setupUi(self, IdleStartDisplay):
         IdleStartDisplay.setObjectName("IdleStartDisplay")
         IdleStartDisplay.resize(800, 400)
-        icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap("DARTS.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        IdleStartDisplay.setWindowIcon(icon)
         self.centralwidget = QtWidgets.QWidget(IdleStartDisplay)
         self.centralwidget.setObjectName("centralwidget")
         self.startButton = QtWidgets.QPushButton(self.centralwidget)
@@ -36,7 +33,7 @@ class Ui_IdleStartDisplay(object):
         self.titleLabel.setAlignment(QtCore.Qt.AlignCenter)
         self.titleLabel.setObjectName("titleLabel")
         self.movieLabel = QtWidgets.QLabel(self.centralwidget)
-        self.movieLabel.setGeometry(QtCore.QRect(290, 50, 230, 230))
+        self.movieLabel.setGeometry(QtCore.QRect(285, 50, 230, 230))
         self.movieLabel.setText("")
         self.movieLabel.setObjectName("movieLabel")
         IdleStartDisplay.setCentralWidget(self.centralwidget)

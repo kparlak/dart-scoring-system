@@ -13,10 +13,6 @@
   <property name="windowTitle">
    <string>DARTS</string>
   </property>
-  <property name="windowIcon">
-   <iconset>
-    <normaloff>DARTS.png</normaloff>DARTS.png</iconset>
-  </property>
   <widget class="QWidget" name="centralwidget">
    <widget class="QPushButton" name="startButton">
     <property name="geometry">
@@ -70,7 +66,7 @@
    <widget class="QLabel" name="movieLabel">
     <property name="geometry">
      <rect>
-      <x>290</x>
+      <x>285</x>
       <y>50</y>
       <width>230</width>
       <height>230</height>
