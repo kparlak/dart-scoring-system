@@ -51,7 +51,7 @@ class IdleStartDisplay(QMainWindow, Ui_IdleStartDisplay):
     def __init__(self, parent=None):
         super(IdleStartDisplay, self).__init__(parent)
         self.setupUi(self)
-        self.movie = QMovie("ui/throwing_darts.gif")
+        self.movie = QMovie("ui/DARTS_Startup_Resized.gif")
         self.movieLabel.setMovie(self.movie)
         self.movie.start()
         self.helpBox = HelpBox()
