@@ -22,7 +22,7 @@
     <property name="geometry">
      <rect>
       <x>300</x>
-      <y>250</y>
+      <y>290</y>
       <width>200</width>
       <height>100</height>
      </rect>
@@ -48,7 +48,7 @@
     <property name="geometry">
      <rect>
       <x>0</x>
-      <y>0</y>
+      <y>10</y>
       <width>800</width>
       <height>41</height>
      </rect>
@@ -70,10 +70,10 @@
    <widget class="QLabel" name="movieLabel">
     <property name="geometry">
      <rect>
-      <x>300</x>
-      <y>40</y>
-      <width>200</width>
-      <height>200</height>
+      <x>290</x>
+      <y>50</y>
+      <width>230</width>
+      <height>230</height>
      </rect>
     </property>
     <property name="text">
