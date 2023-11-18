@@ -40,7 +40,7 @@ max_players = 0
 class Icon(QIcon):
     def __init__(self, parent=None):
         super(Icon, self).__init__(parent)
-        self.addPixmap(QPixmap("ui/DARTS.png"), QIcon.Normal, QIcon.Off)
+        self.addPixmap(QPixmap("ui/DARTS_Icon.png"), QIcon.Normal, QIcon.Off)
 
 class HelpBox(QMessageBox):
     def __init__(self, parent=None):
@@ -55,9 +55,9 @@ class ErrorBox(QMessageBox):
 class IdleStartDisplay(QMainWindow, Ui_IdleStartDisplay):
     def __init__(self, parent=None):
         super(IdleStartDisplay, self).__init__(parent)
+        self.setupUi(self)
         self.icon = Icon()
         self.setWindowIcon(self.icon)
-        self.setupUi(self)
         self.movie = QMovie("ui/DARTS_Startup_Resized.gif")
         self.movieLabel.setMovie(self.movie)
         self.movie.start()
@@ -76,6 +76,8 @@ class StartDisplay(QMainWindow, Ui_StartDisplay):
     def __init__(self, parent=None):
         super(StartDisplay, self).__init__(parent)
         self.setupUi(self)
+        self.icon = Icon()
+        self.setWindowIcon(self.icon)
         self.helpBox = HelpBox()
         self.helpButton.clicked.connect(self.help_button)
         self.createProfileButton.clicked.connect(self.create_profile_button)
@@ -96,6 +98,8 @@ class CreateProfileDisplay(QMainWindow, Ui_CreateProfileDisplay):
     def __init__(self, parent=None):
         super(CreateProfileDisplay, self).__init__(parent)
         self.setupUi(self)
+        self.icon = Icon()
+        self.setWindowIcon(self.icon)
         self.helpBox = HelpBox()
         self.helpButton.clicked.connect(self.help_button)
         self.uploadButton.clicked.connect(self.upload_button)
@@ -115,6 +119,8 @@ class SelectGameDisplay(QMainWindow, Ui_SelectGameDisplay):
     def __init__(self, parent=None):
         super(SelectGameDisplay, self).__init__(parent)
         self.setupUi(self)
+        self.icon = Icon()
+        self.setWindowIcon(self.icon)
         self.helpBox = HelpBox()
         self.helpButton.clicked.connect(self.help_button)
         self.selectPlayersButton.clicked.connect(self.select_players_button)
@@ -140,9 +146,11 @@ class SelectGameDisplay(QMainWindow, Ui_SelectGameDisplay):
 class SelectPlayersDisplay(QMainWindow, Ui_SelectPlayersDisplay):
     def __init__(self, parent=None):
         super(SelectPlayersDisplay, self).__init__(parent)
+        self.setupUi(self)
+        self.icon = Icon()
+        self.setWindowIcon(self.icon)
         self.helpBox = HelpBox()
         self.errorBox = ErrorBox()
-        self.setupUi(self)
         self.playButton.setEnabled(False)
         self.helpButton.clicked.connect(self.help_button)
         self.loadButton.clicked.connect(self.load_button)
@@ -227,8 +235,6 @@ class UserInterface():
 
         self.first.show()
 
-
-# TODO : Make a class
 def connect():
     client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server_address = (constants.IP_ADDRESS, constants.PORT)

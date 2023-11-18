@@ -15,9 +15,6 @@ class Ui_SelectPlayersDisplay(object):
     def setupUi(self, SelectPlayersDisplay):
         SelectPlayersDisplay.setObjectName("SelectPlayersDisplay")
         SelectPlayersDisplay.resize(800, 400)
-        icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap("DARTS.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        SelectPlayersDisplay.setWindowIcon(icon)
         self.centralwidget = QtWidgets.QWidget(SelectPlayersDisplay)
         self.centralwidget.setObjectName("centralwidget")
         self.helpButton = QtWidgets.QPushButton(self.centralwidget)

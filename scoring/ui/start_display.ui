@@ -13,10 +13,6 @@
   <property name="windowTitle">
    <string>Start</string>
   </property>
-  <property name="windowIcon">
-   <iconset>
-    <normaloff>DARTS.png</normaloff>DARTS.png</iconset>
-  </property>
   <widget class="QWidget" name="centralwidget">
    <widget class="QPushButton" name="createProfileButton">
     <property name="geometry">

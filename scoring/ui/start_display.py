@@ -15,9 +15,6 @@ class Ui_StartDisplay(object):
     def setupUi(self, StartDisplay):
         StartDisplay.setObjectName("StartDisplay")
         StartDisplay.resize(800, 400)
-        icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap("DARTS.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        StartDisplay.setWindowIcon(icon)
         self.centralwidget = QtWidgets.QWidget(StartDisplay)
         self.centralwidget.setObjectName("centralwidget")
         self.createProfileButton = QtWidgets.QPushButton(self.centralwidget)

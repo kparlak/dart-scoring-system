@@ -15,9 +15,6 @@ class Ui_CreateProfileDisplay(object):
     def setupUi(self, CreateProfileDisplay):
         CreateProfileDisplay.setObjectName("CreateProfileDisplay")
         CreateProfileDisplay.resize(800, 400)
-        icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap("DARTS.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        CreateProfileDisplay.setWindowIcon(icon)
         self.centralwidget = QtWidgets.QWidget(CreateProfileDisplay)
         self.centralwidget.setObjectName("centralwidget")
         self.helpButton = QtWidgets.QPushButton(self.centralwidget)
