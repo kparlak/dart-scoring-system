@@ -16,6 +16,7 @@ import socket
 import constants
 
 from PyQt5.QtWidgets import QApplication, QMainWindow, QMessageBox
+from PyQt5.QtGui import QMovie
 
 from ui.idle_start_display import Ui_IdleStartDisplay
 from ui.start_display import Ui_StartDisplay
@@ -50,6 +51,9 @@ class IdleStartDisplay(QMainWindow, Ui_IdleStartDisplay):
     def __init__(self, parent=None):
         super(IdleStartDisplay, self).__init__(parent)
         self.setupUi(self)
+        self.movie = QMovie("ui/throwing_darts.gif")
+        self.movieLabel.setMovie(self.movie)
+        self.movie.start()
         self.helpBox = HelpBox()
         self.helpButton.clicked.connect(self.help_button)
         self.startButton.clicked.connect(self.start_button)
@@ -174,7 +178,6 @@ class SelectPlayersDisplay(QMainWindow, Ui_SelectPlayersDisplay):
         if num_players == max_players:
             self.guestButton.setEnabled(False)
             self.loadButton.setEnabled(False)
-
 
     def play_button(self):
         # TODO : Connect to imaging system
