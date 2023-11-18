@@ -12,9 +12,15 @@
 import array as arr
 
 class Game501():
-    def __init__(self) -> None:
+    def __init__(self):
+        self.reset()
+
+    def reset(self):
         self.score = arr.array('i', [501, 501])
         self.winner = arr.array('b', [False, False])
+
+    def get_num_turns(self):
+        return 3
 
     def get_num_players(self):
         return len(self.score)

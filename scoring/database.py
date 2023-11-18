@@ -12,17 +12,14 @@
 import sqlite3
 
 class Database():
-    def __init__(self) -> None:
-        pass
-
-    def connect(self, file):
+    def __init__(self, file):
         self.connection = None
         try:
             self.connection = sqlite3.connect(file)
         except sqlite3.Error as error:
             print(error)
 
-    def disconnect(self):
+    def __del__(self):
         self.connection.close()
 
     def create_table(self, table):
@@ -37,6 +34,7 @@ class Database():
                         id integer PRIMARY KEY AUTOINCREMENT,
                         name text NOT NULL,
                         username text NOT NULL,
+                        num_throws integer,
                         num_games integer,
                         num_wins integer
                     );"""
@@ -99,8 +97,8 @@ class Database():
         self.connection.commit()
 
     def insert_player(self, data):
-        sql =   '''INSERT INTO players(username, name, num_games, num_wins)
-                    VALUES(?, ?, 0, 0)
+        sql =   '''INSERT INTO players(name, username, num_throws, num_games, num_wins)
+                    VALUES(?, ?, 0, 0, 0)
                 '''
         cursor = self.connection.cursor()
         cursor.execute(sql, data)
@@ -142,7 +140,8 @@ class Database():
 
     def update_player(self, data):
         sql =   '''UPDATE players
-                    SET num_games = ?,
+                    SET num_throws = ?,
+                        num_games = ?,
                         num_wins = ?
                     WHERE id = ?
                 '''
