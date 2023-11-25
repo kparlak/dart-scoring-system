@@ -61,15 +61,13 @@
 - Enable fan output
     - Create execution script
         ```
-        sudo touch /usr/local/bin/fan.sh
-        ``` 
-    - Add PWM value to script
+        sudo nano /usr/local/bin/fan.sh
+        ```
         ```
         #!/bin/bash
         echo 150 > /sys/devices/pwm-fan/target_pwm
         exit 0
         ```
-    - Set permissions
         ```
         sudo chmod 666 /sys/devices/pwm-fan/target_pwm
         sudo chmod a+x /usr/local/bin/fan.sh
