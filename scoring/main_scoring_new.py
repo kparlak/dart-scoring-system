@@ -315,10 +315,8 @@ class UserInterface():
             for i in range(len(players)):
                 if i == 0:
                     self.sixth.player1UsernameOutput.insertPlainText(players[0].get_username())
-                    self.sixth.player1ScoreOutput.insertPlainText(str(game.get_score(player=0)))
                 elif i == 1:
                     self.sixth.player2UsernameOutput.insertPlainText(players[1].get_username())
-                    self.sixth.player2ScoreOutput.insertPlainText(str(game.get_score(player=1)))
                 else:
                     pass
 
