@@ -13,12 +13,10 @@ import sys
 sys.path.append('..')
 import socket
 import pickle
-import time
 
 import constants
 
 from PyQt5.QtWidgets import QApplication, QMainWindow, QMessageBox
-from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QIcon, QPixmap, QMovie
 
 from ui.idle_start_display import Ui_IdleStartDisplay
@@ -200,8 +198,7 @@ class SelectPlayersDisplay(QMainWindow, Ui_SelectPlayersDisplay):
             self.loadButton.setEnabled(False)
 
     def play_button(self):
-        # self.close()
-        # TODO : Connect to imaging system
+        pass
 
     def cancel_button(self):
         global num_players
@@ -237,8 +234,10 @@ class ScoreboardDisplay(QMainWindow, Ui_ScoreboardDisplay):
         self.num_turns += 1
         # Send look message
         client.send(constants.LOOK_MSG.encode())
+        # Disable button to wait for event
+        self.player1Button.setEnabled(False)
+        QApplication.processEvents()
         # Wait on location message
-        # self.player1Button.setEnabled(False)
         data = client.recv(constants.BUFFER_SIZE)
         # Deserialize data from socket
         constants.MSG = pickle.loads(data)
@@ -256,11 +255,16 @@ class ScoreboardDisplay(QMainWindow, Ui_ScoreboardDisplay):
             self.num_turns = 0
             self.player1Button.setEnabled(False)
             self.player2Button.setEnabled(True)
+        else:
+            self.player1Button.setEnabled(True)
 
     def player2_button(self):
         self.num_turns += 1
         # Send look message
         client.send(constants.LOOK_MSG.encode())
+        # Disable button to wait for event
+        self.player2Button.setEnabled(False)
+        QApplication.processEvents()
         # Wait on location message
         data = client.recv(constants.BUFFER_SIZE)
         # Deserialize data from socket
@@ -279,13 +283,12 @@ class ScoreboardDisplay(QMainWindow, Ui_ScoreboardDisplay):
             self.num_turns = 0
             self.player2Button.setEnabled(False)
             self.player1Button.setEnabled(True)
+        else:
+            self.player2Button.setEnabled(True)
 
     def quit_button(self):
         pass
         # self.close()
-
-    def update_game(self):
-        pass
 
 class UserInterface():
     def __init__(self):
