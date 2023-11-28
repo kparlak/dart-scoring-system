@@ -18,6 +18,7 @@ import time
 import constants
 
 from PyQt5.QtWidgets import QApplication, QMainWindow, QMessageBox
+from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QIcon, QPixmap, QMovie
 
 from ui.idle_start_display import Ui_IdleStartDisplay
@@ -246,6 +247,7 @@ class ScoreboardDisplay(QMainWindow, Ui_ScoreboardDisplay):
         # Update score
         score = game.update(player=0, number=number, ring=ring)
         self.player1ScoreOutput.setPlainText(str(score))
+        self.player1ScoreOutput.setAlignment(AlignCenter)
         # Update player statistics
         players[0].inc_num_throws()
         players[0].update_number(number)
