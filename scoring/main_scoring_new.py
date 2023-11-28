@@ -248,6 +248,7 @@ class ScoreboardDisplay(QMainWindow, Ui_ScoreboardDisplay):
         score = game.update(player=0, number=number, ring=ring)
         self.player1ScoreOutput.setPlainText(str(score))
         self.player1ScoreOutput.setAlignment(AlignCenter)
+        self.player1ScoreOutput
         # Update player statistics
         players[0].inc_num_throws()
         players[0].update_number(number)
