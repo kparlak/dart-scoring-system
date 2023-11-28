@@ -12,6 +12,8 @@
 import sys
 sys.path.append('..')
 import socket
+import pickle
+import time
 
 import constants
 
@@ -23,6 +25,7 @@ from ui.start_display import Ui_StartDisplay
 from ui.create_profile_display import Ui_CreateProfileDisplay
 from ui.select_game_display import Ui_SelectGameDisplay
 from ui.select_players_display import Ui_SelectPlayersDisplay
+from ui.scoreboard_display import Ui_ScoreboardDisplay
 
 from database import Database
 from player import Player
@@ -34,8 +37,8 @@ database = Database('DARTS.db')
 # Globals
 game = None
 players = []
+client = None
 num_players = 0
-max_players = 0
 
 class Icon(QIcon):
     def __init__(self, parent=None):
@@ -131,12 +134,11 @@ class SelectGameDisplay(QMainWindow, Ui_SelectGameDisplay):
         self.helpBox.exec()
 
     def select_players_button(self):
+        global game
         if self.gameBox.currentText() == '501':
             game = Game501()
         elif self.gameBox.currentText() == 'Around the World':
             game = GameAroundTheWorld()
-        global max_players
-        max_players = game.get_num_players()
         self.close()
 
     def cancel_button(self):
@@ -178,8 +180,9 @@ class SelectPlayersDisplay(QMainWindow, Ui_SelectPlayersDisplay):
             output = 'Player ' + str(num_players) + ': ' + players[num_players - 1].get_username() +'\n'
             self.playersOutput.insertPlainText(output)
             self.usernameInput.clear()
-            # Disable buttosn if max number of players
-            if num_players == max_players:
+            self.playButton.setEnabled(True)
+            # Disable buttons if max number of players
+            if num_players == game.get_num_players():
                 self.loadButton.setEnabled(False)
                 self.guestButton.setEnabled(False)
 
@@ -189,14 +192,15 @@ class SelectPlayersDisplay(QMainWindow, Ui_SelectPlayersDisplay):
         num_players += 1
         output = 'Player ' + str(num_players) + ': ' + players[num_players - 1].get_username() + '\n'
         self.playersOutput.insertPlainText(output)
+        self.playButton.setEnabled(True)
         # Disable buttons if max number of players
-        if num_players == max_players:
+        if num_players == game.get_num_players():
             self.guestButton.setEnabled(False)
             self.loadButton.setEnabled(False)
 
     def play_button(self):
+        self.close()
         # TODO : Connect to imaging system
-        pass
 
     def cancel_button(self):
         global num_players
@@ -209,6 +213,66 @@ class SelectPlayersDisplay(QMainWindow, Ui_SelectPlayersDisplay):
         self.playButton.setEnabled(False)
         self.close()
 
+class ScoreboardDisplay(QMainWindow, Ui_ScoreboardDisplay):
+    def __init__(self, parent=None):
+        super(ScoreboardDisplay, self).__init__(parent)
+        self.setupUi(self)
+        self.icon = Icon()
+        self.setWindowIcon(self.icon)
+        self.helpBox = HelpBox()
+        self.player1Button.setEnabled(True)
+        self.player2Button.setEnabled(False)
+        self.helpButton.clicked.connect(self.help_button)
+        self.player1Button.clicked.connect(self.player1_button)
+        self.player2Button.clicked.connect(self.player2_button)
+        self.quitButton.clicked.connect(self.quit_button)
+        self.num_turns = 0
+
+    def help_button(self):
+        self.helpBox.setText('TODO')
+        self.helpBox.exec()
+
+    def player1_button(self):
+        self.num_turns += 1
+        # Send look message
+        client.send(constants.LOOK_MSG.encode())
+        # Wait on location message
+        # self.player1Button.setEnabled(False)
+        data = client.recv(constants.BUFFER_SIZE)
+        # Deserialize data from socket
+        constants.MSG = pickle.loads(data)
+        number = constants.MSG["number"]
+        ring = constants.MSG["ring"]
+        # Update score
+        score = game.update(player=0, number=number, ring=ring)
+        print(str(score))
+        self.player1ScoreOutput.insertPlainText(str(score))
+        # Update player statistics
+        players[0].inc_num_throws()
+        players[0].update_number(number)
+        players[0].update_ring(ring)
+        # Switch player
+        if len(players) > 1 and self.num_turns == game.get_num_turns():
+            self.num_turns = 0
+            self.player1Button.setEnabled(False)
+            self.player2Button.setEnabled(True)
+
+    def player2_button(self):
+        self.num_turns += 1
+        client.send(constants.LOOK_MSG.encode())
+        # Switch player
+        if self.num_turns == game.get_num_turns():
+            self.num_turns = 0
+            self.player2Button.setEnabled(False)
+            self.player1Button.setEnabled(True)
+
+    def quit_button(self):
+        pass
+        # self.close()
+
+    def update_game(self):
+        pass
+
 class UserInterface():
     def __init__(self):
         self.first = IdleStartDisplay()
@@ -216,6 +280,7 @@ class UserInterface():
         self.third = CreateProfileDisplay()
         self.fourth = SelectGameDisplay()
         self.fifth = SelectPlayersDisplay()
+        self.sixth = ScoreboardDisplay()
 
         # Transitions
         self.first.startButton.clicked.connect(self.second.show)
@@ -230,17 +295,38 @@ class UserInterface():
         self.fourth.selectPlayersButton.clicked.connect(self.fifth.show)
         self.fourth.cancelButton.clicked.connect(self.second.show)
 
-        # self.fifth.playButton.clicked.connect(self.sixth.show)
+        self.fifth.playButton.clicked.connect(self.play_button)
         self.fifth.cancelButton.clicked.connect(self.fourth.show)
+
+        # self.sixth.quitButton.clicked.connect(self.second.show)
 
         self.first.show()
 
+    def play_button(self):
+        # Connect to imaging system
+        connect()
+        # Wait for READY message
+        # TODO : pop-up dialog indicating system is waiting
+        data = client.recv(constants.BUFFER_SIZE).decode()
+        if data == constants.READY_MSG:
+            self.sixth.show()
+            self.sixth.setWindowTitle(game.get_name())
+            # Load players
+            for i in range(len(players)):
+                if i == 0:
+                    self.sixth.player1UsernameOutput.insertPlainText(players[0].get_username())
+                    self.sixth.player1ScoreOutput.insertPlainText(str(game.get_score(player=0)))
+                elif i == 1:
+                    self.sixth.player2UsernameOutput.insertPlainText(players[1].get_username())
+                    self.sixth.player2ScoreOutput.insertPlainText(str(game.get_score(player=1)))
+                else:
+                    pass
+
 def connect():
+    global client
     client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server_address = (constants.IP_ADDRESS, constants.PORT)
     client.connect(server_address)
-
-
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)

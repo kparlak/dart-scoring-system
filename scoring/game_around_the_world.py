@@ -19,6 +19,9 @@ class GameAroundTheWorld():
         self.score = arr.array('i', [0, 0])
         self.winner = arr.array('b', [False, False])
 
+    def get_name(self):
+        return 'Around the World'
+
     def get_num_turns(self):
         return 3
 
