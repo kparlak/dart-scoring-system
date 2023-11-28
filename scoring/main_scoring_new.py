@@ -259,7 +259,21 @@ class ScoreboardDisplay(QMainWindow, Ui_ScoreboardDisplay):
 
     def player2_button(self):
         self.num_turns += 1
+        # Send look message
         client.send(constants.LOOK_MSG.encode())
+        # Wait on location message
+        data = client.recv(constants.BUFFER_SIZE)
+        # Deserialize data from socket
+        constants.MSG = pickle.loads(data)
+        number = constants.MSG["number"]
+        ring = constants.MSG["ring"]
+        # Update score
+        score = game.update(player=1, number=number, ring=ring)
+        self.player2Score.display(score)
+        # Update player statistics
+        players[1].inc_num_throws()
+        players[1].update_number(number)
+        players[1].update_ring(ring)
         # Switch player
         if self.num_turns == game.get_num_turns():
             self.num_turns = 0
@@ -315,8 +329,10 @@ class UserInterface():
             for i in range(len(players)):
                 if i == 0:
                     self.sixth.player1UsernameOutput.insertPlainText(players[0].get_username())
+                    self.sixth.player1Score.display(game.get_score(player=0))
                 elif i == 1:
                     self.sixth.player2UsernameOutput.insertPlainText(players[1].get_username())
+                    self.sixth.player2Score.display(game.get_score(player=1))
                 else:
                     pass
 
