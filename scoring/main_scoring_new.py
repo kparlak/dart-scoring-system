@@ -320,13 +320,11 @@ class UserInterface():
         # Connect to imaging system
         connect()
         # Wait for READY message
-        msg_box = QMessageBox()
-        msg_box.setText('Waiting to connect to imaging system...')
-        msg_box.show()
+        msg_box = QMessageBox(text='Waiting to connect...')
+        msg_box.exec()
         # TODO : pop-up dialog indicating system is waiting
         data = client.recv(constants.BUFFER_SIZE).decode()
         if data == constants.READY_MSG:
-            del msg_box
             self.sixth.show()
             self.sixth.setWindowTitle(game.get_name())
             # Load players
