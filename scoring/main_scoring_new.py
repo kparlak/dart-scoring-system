@@ -33,7 +33,7 @@ from player import Player
 from game_501 import Game501
 from game_around_the_world import GameAroundTheWorld
 
-database = Database('DARTS.db')
+database = Database('/data/DARTS.db')
 
 # Globals
 game = None
