@@ -200,7 +200,7 @@ class SelectPlayersDisplay(QMainWindow, Ui_SelectPlayersDisplay):
             self.loadButton.setEnabled(False)
 
     def play_button(self):
-        self.close()
+        # self.close()
         # TODO : Connect to imaging system
 
     def cancel_button(self):
@@ -321,10 +321,12 @@ class UserInterface():
         connect()
         # Wait for READY message
         msg_box = QMessageBox(text='Waiting to connect...')
-        msg_box.exec()
+        msg_box.show()
         # TODO : pop-up dialog indicating system is waiting
         data = client.recv(constants.BUFFER_SIZE).decode()
         if data == constants.READY_MSG:
+            del msg_box
+            self.fifth.close()
             self.sixth.show()
             self.sixth.setWindowTitle(game.get_name())
             # Load players
