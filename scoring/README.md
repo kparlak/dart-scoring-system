@@ -22,18 +22,23 @@
         ```
         sudo pip install pyqt5-tools
         ```
+    - Utility installer [snapd](https://snapcraft.io/snapd)
+        ```
+        sudo apt update
+        sudo apt install snapd
+        sudo reboot
+        ```
+        ```
+        sudo snap install core
+        ```
+    - Text Editor - [gedit](https://snapcraft.io/gedit)
+        ```
+        sudo snap install gedit
+        ```
     - Database Browser - [Install sqlitebrowser on Raspberry Pi](https://snapcraft.io/install/sqlitebrowser/raspbian)
-        - Install utility installer
-            ```
-            sudo apt update
-            sudo apt install snapd
-            sudo reboot
-            ```
-        - Install browser
-            ```
-            sudo snap install core
-            sudo snap install sqlitebrowser
-            ```
+        ```
+        sudo snap install sqlitebrowser
+        ```
     - On-Screen Keyboard - [Setting up an On-Screen Keyboard on Raspberry Pi](https://pimylifeup.com/raspberry-pi-on-screen-keyboard/)
         - Install keyboard
             ```
@@ -120,7 +125,7 @@
     ```
 - Start GUI application
     ```
-    TBD
+    ./main_scoring_gui.py
     ```
 
 ## License

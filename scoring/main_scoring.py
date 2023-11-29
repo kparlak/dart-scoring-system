@@ -6,7 +6,7 @@
 @Author  :   Kevin Parlak
 @Version :   1.0
 @License :   MIT
-@Desc    :   Main for command-line interface scoring system
+@Desc    :   Main for scoring system
 '''
 
 import sys

@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 # -*-coding:utf-8 -*-
 '''
-@File    :   ui.py
-@Time    :   2023/11/16
+@File    :   main_scoring_gui.py
+@Time    :   2023/11/28
 @Author  :   Kevin Parlak
 @Version :   1.0
 @License :   MIT
-@Desc    :   Main for scoring system
+@Desc    :   Main for scoring system GUI
 '''
 
 import sys
@@ -17,6 +17,7 @@ import pickle
 import constants
 
 from PyQt5.QtWidgets import QApplication, QMainWindow, QMessageBox
+from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QIcon, QPixmap, QMovie
 
 from ui.idle_start_display import Ui_IdleStartDisplay
@@ -350,6 +351,7 @@ def connect():
     client.connect(server_address)
 
 if __name__ == "__main__":
+    QApplication.setAttribute(Qt.AA_EnableHighDpiScaling, True)
     app = QApplication(sys.argv)
     ui = UserInterface()
     sys.exit(app.exec())
