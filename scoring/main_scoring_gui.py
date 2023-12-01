@@ -44,7 +44,7 @@ class Icon(QIcon):
         super(Icon, self).__init__(parent)
         self.addPixmap(QPixmap("ui/DARTS_Icon.png"), QIcon.Normal, QIcon.Off)
 
-class IdleStartDisplay(QMainWindow, Ui_IdleStartDisplay): # DONE
+class IdleStartDisplay(QMainWindow, Ui_IdleStartDisplay):
     def __init__(self, parent=None):
         super(IdleStartDisplay, self).__init__(parent)
         self.setupUi(self)
@@ -60,7 +60,7 @@ class IdleStartDisplay(QMainWindow, Ui_IdleStartDisplay): # DONE
         QMessageBox.information(self, 'Help',
                                 'Press Start to begin')
 
-class StartDisplay(QMainWindow, Ui_StartDisplay): # DONE
+class StartDisplay(QMainWindow, Ui_StartDisplay):
     def __init__(self, parent=None):
         super(StartDisplay, self).__init__(parent)
         self.setupUi(self)
@@ -75,7 +75,7 @@ class StartDisplay(QMainWindow, Ui_StartDisplay): # DONE
         QMessageBox.information(self, 'Help',
                                 'Create a player profile or select a game to play')
 
-class CreateProfileDisplay(QMainWindow, Ui_CreateProfileDisplay): # DONE
+class CreateProfileDisplay(QMainWindow, Ui_CreateProfileDisplay):
     def __init__(self, parent=None):
         super(CreateProfileDisplay, self).__init__(parent)
         self.setupUi(self)
@@ -86,14 +86,14 @@ class CreateProfileDisplay(QMainWindow, Ui_CreateProfileDisplay): # DONE
 
     def help_button(self):
         QMessageBox.information(self, 'Help',
-                                'Enter name and username and upload to database')
+                                'Enter name and username')
 
     def cancel_button(self):
         self.nameInput.clear()
         self.usernameInput.clear()
         self.close()
 
-class SelectGameDisplay(QMainWindow, Ui_SelectGameDisplay): # DONE
+class SelectGameDisplay(QMainWindow, Ui_SelectGameDisplay):
     def __init__(self, parent=None):
         super(SelectGameDisplay, self).__init__(parent)
         self.setupUi(self)
@@ -106,7 +106,7 @@ class SelectGameDisplay(QMainWindow, Ui_SelectGameDisplay): # DONE
         QMessageBox.information(self, 'Help',
                                 'Select game from dropdown')
 
-class SelectPlayersDisplay(QMainWindow, Ui_SelectPlayersDisplay): # DONE
+class SelectPlayersDisplay(QMainWindow, Ui_SelectPlayersDisplay):
     def __init__(self, parent=None):
         super(SelectPlayersDisplay, self).__init__(parent)
         self.setupUi(self)
@@ -114,23 +114,28 @@ class SelectPlayersDisplay(QMainWindow, Ui_SelectPlayersDisplay): # DONE
         self.setWindowIcon(self.icon)
         self.playButton.setEnabled(False)
         self.helpButton.clicked.connect(self.help_button)
-        self.playButton.clicked.connect(self.reset)
+        self.playButton.clicked.connect(self.play_button)
         self.cancelButton.clicked.connect(self.cancel_button)
-
-    def reset(self):
-        self.playersOutput.clear()
-        self.usernameInput.clear()
-        self.loadButton.setEnabled(True)
-        self.guestButton.setEnabled(True)
-        self.playButton.setEnabled(False)
 
     def help_button(self):
         QMessageBox.information(self, 'Help',
-                                'TODO')
+                                'Load a profile or play as a guest')
+
+    def play_button(self):
+        self.loadButton.setEnabled(True)
+        self.guestButton.setEnabled(True)
+        self.playButton.setEnabled(False)
+        self.playersOutput.clear()
+        self.usernameInput.clear()
+        self.close()
 
     def cancel_button(self):
         players[:] = []
-        self.reset()
+        self.loadButton.setEnabled(True)
+        self.guestButton.setEnabled(True)
+        self.playButton.setEnabled(False)
+        self.playersOutput.clear()
+        self.usernameInput.clear()
         self.close()
 
 class ScoreboardDisplay(QMainWindow, Ui_ScoreboardDisplay):
@@ -139,21 +144,20 @@ class ScoreboardDisplay(QMainWindow, Ui_ScoreboardDisplay):
         self.setupUi(self)
         self.icon = Icon()
         self.setWindowIcon(self.icon)
-        self.player1Button.setEnabled(True)
         self.player2Button.setEnabled(False)
         self.helpButton.clicked.connect(self.help_button)
-
-    def reset_buttons(self):
-        self.player1Button.setEnabled(True)
-        self.player2Button.setEnabled(False)
-
-    def reset_text(self):
-        self.player1UsernameOutput.clear()
-        self.player2UsernameOutput.clear()
+        self.quitButton.clicked.connect(self.quit_button)
 
     def help_button(self):
         QMessageBox.information(self, 'Help',
                                 'Select player prior to throwing')
+
+    def quit_button(self):
+        self.player1Button.setEnabled(True)
+        self.player2Button.setEnabled(False)
+        self.player1UsernameOutput.clear()
+        self.player2UsernameOutput.clear()
+        self.close()
 
 class UserInterface():
     def __init__(self):
@@ -193,13 +197,12 @@ class UserInterface():
     def upload_button(self):
         name = self.third.nameInput.toPlainText()
         username = self.third.usernameInput.toPlainText()
+        # Upload profile to database if valid name and username
         if name == '' and username == '':
             QMessageBox.critical(self.third, 'Upload Error',
                                  'Name and username are blank')
         else:
             database.insert_player((name, username))
-            QMessageBox.information(self.third, 'Upload', # TODO : Better vergabe
-                                    'Upload Successful')
             self.third.close()
             self.second.show()
         self.third.nameInput.clear()
@@ -211,33 +214,32 @@ class UserInterface():
             game = Game501()
         elif self.fourth.gameBox.currentText() == 'Around the World':
             game = GameAroundTheWorld()
-        else:
-            pass
         self.fourth.close()
         self.fifth.show()
 
     def load_button(self):
         username = self.fifth.usernameInput.toPlainText()
         player = database.select_player(username)
-        # Load profile if valid username
+        # Load profile from database if valid username
         if username == '' or len(player) == 0:
-            QMessageBox.critical(self.fifth, 'Help', # TODO : Better title
+            QMessageBox.critical(self.fifth, 'Load Error',
                                  'Username not valid')
-            self.fifth.usernameInput.clear()
         else:
+            # Add profile player
             players.append(Player(id=player[0][0],
                                   name=player[0][1], username=player[0][2],
                                   num_throws=player[0][3], num_games=player[0][4], num_wins=player[0][5]))
             output = 'Player ' + str(len(players)) + ': ' + players[len(players) - 1].get_username() + '\n'
             self.fifth.playersOutput.insertPlainText(output)
-            self.fifth.usernameInput.clear()
             self.fifth.playButton.setEnabled(True)
             # Disable buttons if max number of players
             if len(players) == game.get_num_players():
                 self.fifth.loadButton.setEnabled(False)
                 self.fifth.guestButton.setEnabled(False)
+        self.fifth.usernameInput.clear()
 
     def guest_button(self):
+        # Add guest player
         players.append(Player())
         output = 'Player ' + str(len(players)) + ': ' + players[len(players) - 1].get_username() + '\n'
         self.fifth.playersOutput.insertPlainText(output)
@@ -248,20 +250,17 @@ class UserInterface():
             self.fifth.loadButton.setEnabled(False)
 
     def play_button(self):
-        for i in range(len(players)):
-            players[i].inc_num_games()
         # Connect to imaging system
         connect()
-        # Wait for READY message
-        self.fifth.close()
-        QMessageBox.information(self.fifth, 'dd', # TODO : Label correctly
+        QMessageBox.information(self.fifth, 'Connection Status',
                                 'Connecting to imaging system...')
+        # Wait for ready message
         data = client.recv(constants.BUFFER_SIZE).decode()
         if data == constants.READY_MSG:
-            self.sixth.show()
             self.sixth.setWindowTitle(game.get_name())
-            # Load players
+            # Load players and displays
             for i in range(len(players)):
+                players[i].inc_num_games()
                 if i == 0:
                     self.sixth.player1UsernameOutput.insertPlainText(players[0].get_username())
                     self.sixth.player1Score.display(game.get_score(player=0))
@@ -270,6 +269,7 @@ class UserInterface():
                     self.sixth.player2Score.display(game.get_score(player=1))
                 else:
                     pass
+            self.sixth.show()
 
     def player_button(self, player):
         self.num_turns += 1
@@ -280,8 +280,6 @@ class UserInterface():
             self.sixth.player1Button.setEnabled(False)
         elif player == 1:
             self.sixth.player2Button.setEnabled(False)
-        else:
-            pass
         QApplication.processEvents()
         # Wait on location message
         data = client.recv(constants.BUFFER_SIZE)
@@ -295,8 +293,6 @@ class UserInterface():
             self.sixth.player1Score.display(score)
         elif player == 1:
             self.sixth.player2Score.display(score)
-        else:
-            pass
         # Update player statistics
         players[player].inc_num_throws()
         players[player].update_number(number)
@@ -305,6 +301,9 @@ class UserInterface():
         if game.get_winner(player=player) == True:
             players[player].inc_num_wins()
             update_records()
+            self.num_turns = 0
+            self.sixth.player1Button.setEnabled(True)
+            self.sixth.player2Button.setEnabled(False)
             reply = QMessageBox.question(self.sixth,
                                          'Player ' + str(player + 1) + ' wins!',
                                          'Play again?',
@@ -319,17 +318,14 @@ class UserInterface():
                         self.sixth.player1Score.display(game.get_score(player=0))
                     elif i == 1:
                         self.sixth.player2Score.display(game.get_score(player=1))
-                    else:
-                        pass
-                self.sixth.reset_buttons()
-                self.num_turns = 0
             else:
                 # Reset
                 players[:] = []
                 # Disconnect from imaging system
                 disconnect()
-                self.sixth.reset_buttons()
-                self.sixth.reset_text()
+                # Reset display
+                self.sixth.player1UsernameOutput.clear()
+                self.sixth.player2UsernameOutput.clear()
                 self.sixth.close()
                 self.first.show()
         # Switch player
@@ -342,15 +338,11 @@ class UserInterface():
                 elif player == 1:
                     self.sixth.player1Button.setEnabled(True)
                     self.sixth.player2Button.setEnabled(False)
-                else:
-                    pass
             else:
                 if player == 0:
                     self.sixth.player1Button.setEnabled(True)
                 elif player == 1:
                     self.sixth.player2Button.setEnabled(True)
-                else:
-                    pass
 
     def player1_button(self):
         self.player_button(player=0)
@@ -364,10 +356,8 @@ class UserInterface():
         global game
         game = None
         players[:] = []
+        # Disconnect from imaging system
         disconnect()
-        self.sixth.reset_buttons()
-        self.sixth.reset_text()
-        self.sixth.close()
         self.first.show()
 
 def connect():
@@ -384,6 +374,7 @@ def update_records():
     date = datetime.today().strftime('%Y-%m-%d %H:%M:%S')
     for i in range(len(players)):
         player_id = players[i].get_id()
+        # Update record if not a guest
         if player_id != 0:
             # Update number record table
             number_hits = players[i].get_number_hits()
@@ -401,9 +392,13 @@ def update_records():
             database.update_player(player)
 
 if __name__ == "__main__":
-    QApplication.setAttribute(Qt.AA_EnableHighDpiScaling, True)
-    app = QApplication(sys.argv)
-    ui = UserInterface()
-    sys.exit(app.exec())
+    try:
+        QApplication.setAttribute(Qt.AA_EnableHighDpiScaling, True)
+        app = QApplication(sys.argv)
+        ui = UserInterface()
+        sys.exit(app.exec())
+
+    except Exception as e:
+        print(e)
 
 # EOF
