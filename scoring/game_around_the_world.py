@@ -22,6 +22,9 @@ class GameAroundTheWorld():
     def get_name(self):
         return 'Around the World'
 
+    def get_id(self):
+        return 2
+
     def get_num_turns(self):
         return 3
 

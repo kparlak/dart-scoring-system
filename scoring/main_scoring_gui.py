@@ -13,6 +13,7 @@ import sys
 sys.path.append('..')
 import socket
 import pickle
+from datetime import datetime
 
 import constants
 
@@ -32,30 +33,18 @@ from player import Player
 from game_501 import Game501
 from game_around_the_world import GameAroundTheWorld
 
-database = Database('/data/DARTS.db')
-
 # Globals
+database = Database('DARTS.db')
 game = None
 players = []
 client = None
-num_players = 0
 
 class Icon(QIcon):
     def __init__(self, parent=None):
         super(Icon, self).__init__(parent)
         self.addPixmap(QPixmap("ui/DARTS_Icon.png"), QIcon.Normal, QIcon.Off)
 
-class HelpBox(QMessageBox):
-    def __init__(self, parent=None):
-        super(HelpBox, self).__init__(parent)
-        self.setWindowTitle('Help')
-
-class ErrorBox(QMessageBox):
-    def __init__(self, parent=None):
-        super(ErrorBox, self).__init__(parent)
-        self.setWindowTitle('Error')
-
-class IdleStartDisplay(QMainWindow, Ui_IdleStartDisplay):
+class IdleStartDisplay(QMainWindow, Ui_IdleStartDisplay): # DONE
     def __init__(self, parent=None):
         super(IdleStartDisplay, self).__init__(parent)
         self.setupUi(self)
@@ -64,152 +53,84 @@ class IdleStartDisplay(QMainWindow, Ui_IdleStartDisplay):
         self.movie = QMovie("ui/DARTS_Startup_Resized.gif")
         self.movieLabel.setMovie(self.movie)
         self.movie.start()
-        self.helpBox = HelpBox()
         self.helpButton.clicked.connect(self.help_button)
-        self.startButton.clicked.connect(self.start_button)
+        self.startButton.clicked.connect(self.close)
 
     def help_button(self):
-        self.helpBox.setText('Press Start to Begin')
-        self.helpBox.exec()
+        QMessageBox.information(self, 'Help',
+                                'Press Start to begin')
 
-    def start_button(self):
-        self.close()
-
-class StartDisplay(QMainWindow, Ui_StartDisplay):
+class StartDisplay(QMainWindow, Ui_StartDisplay): # DONE
     def __init__(self, parent=None):
         super(StartDisplay, self).__init__(parent)
         self.setupUi(self)
         self.icon = Icon()
         self.setWindowIcon(self.icon)
-        self.helpBox = HelpBox()
         self.helpButton.clicked.connect(self.help_button)
-        self.createProfileButton.clicked.connect(self.create_profile_button)
-        self.selectGameButton.clicked.connect(self.select_game_button)
+        self.createProfileButton.clicked.connect(self.close)
+        self.selectGameButton.clicked.connect(self.close)
         self.cancelButton.clicked.connect(self.close)
 
     def help_button(self):
-        self.helpBox.setText('TODO')
-        self.helpBox.exec()
+        QMessageBox.information(self, 'Help',
+                                'Create a player profile or select a game to play')
 
-    def create_profile_button(self):
-        self.close()
-
-    def select_game_button(self):
-        self.close()
-
-class CreateProfileDisplay(QMainWindow, Ui_CreateProfileDisplay):
+class CreateProfileDisplay(QMainWindow, Ui_CreateProfileDisplay): # DONE
     def __init__(self, parent=None):
         super(CreateProfileDisplay, self).__init__(parent)
         self.setupUi(self)
         self.icon = Icon()
         self.setWindowIcon(self.icon)
-        self.helpBox = HelpBox()
         self.helpButton.clicked.connect(self.help_button)
-        self.uploadButton.clicked.connect(self.upload_button)
-        self.cancelButton.clicked.connect(self.close)
+        self.cancelButton.clicked.connect(self.cancel_button)
 
     def help_button(self):
-        self.helpBox.setText('TODO')
-        self.helpBox.exec()
+        QMessageBox.information(self, 'Help',
+                                'Enter name and username and upload to database')
 
-    def upload_button(self):
-        name = self.nameInput.toPlainText()
-        username = self.usernameInput.toPlainText()
-        database.insert_player((name, username))
+    def cancel_button(self):
+        self.nameInput.clear()
+        self.usernameInput.clear()
         self.close()
 
-class SelectGameDisplay(QMainWindow, Ui_SelectGameDisplay):
+class SelectGameDisplay(QMainWindow, Ui_SelectGameDisplay): # DONE
     def __init__(self, parent=None):
         super(SelectGameDisplay, self).__init__(parent)
         self.setupUi(self)
         self.icon = Icon()
         self.setWindowIcon(self.icon)
-        self.helpBox = HelpBox()
         self.helpButton.clicked.connect(self.help_button)
-        self.selectPlayersButton.clicked.connect(self.select_players_button)
-        self.cancelButton.clicked.connect(self.cancel_button)
+        self.cancelButton.clicked.connect(self.close)
 
     def help_button(self):
-        self.helpBox.setText('TODO')
-        self.helpBox.exec()
+        QMessageBox.information(self, 'Help',
+                                'Select game from dropdown')
 
-    def select_players_button(self):
-        global game
-        if self.gameBox.currentText() == '501':
-            game = Game501()
-        elif self.gameBox.currentText() == 'Around the World':
-            game = GameAroundTheWorld()
-        self.close()
-
-    def cancel_button(self):
-        game = None
-        self.close()
-
-class SelectPlayersDisplay(QMainWindow, Ui_SelectPlayersDisplay):
+class SelectPlayersDisplay(QMainWindow, Ui_SelectPlayersDisplay): # DONE
     def __init__(self, parent=None):
         super(SelectPlayersDisplay, self).__init__(parent)
         self.setupUi(self)
         self.icon = Icon()
         self.setWindowIcon(self.icon)
-        self.helpBox = HelpBox()
-        self.errorBox = ErrorBox()
         self.playButton.setEnabled(False)
         self.helpButton.clicked.connect(self.help_button)
-        self.loadButton.clicked.connect(self.load_button)
-        self.guestButton.clicked.connect(self.guest_button)
-        self.playButton.clicked.connect(self.play_button)
+        self.playButton.clicked.connect(self.reset)
         self.cancelButton.clicked.connect(self.cancel_button)
 
-    def help_button(self):
-        self.helpBox.setText('TODO')
-        self.helpBox.exec()
-
-    def load_button(self):
-        global num_players
-        username = self.usernameInput.toPlainText()
-        player = database.select_player(username)
-        # Load profile if valid username
-        if len(player) == 0:
-            self.errorBox.setText('Bad username')
-            self.errorBox.exec()
-        else:
-            players.append(Player(id=player[0][0],
-                                  name=player[0][1], username=player[0][2],
-                                  num_games=player[0][3], num_wins=player[0][4]))
-            num_players += 1
-            output = 'Player ' + str(num_players) + ': ' + players[num_players - 1].get_username() +'\n'
-            self.playersOutput.insertPlainText(output)
-            self.usernameInput.clear()
-            self.playButton.setEnabled(True)
-            # Disable buttons if max number of players
-            if num_players == game.get_num_players():
-                self.loadButton.setEnabled(False)
-                self.guestButton.setEnabled(False)
-
-    def guest_button(self):
-        global num_players
-        players.append(Player())
-        num_players += 1
-        output = 'Player ' + str(num_players) + ': ' + players[num_players - 1].get_username() + '\n'
-        self.playersOutput.insertPlainText(output)
-        self.playButton.setEnabled(True)
-        # Disable buttons if max number of players
-        if num_players == game.get_num_players():
-            self.guestButton.setEnabled(False)
-            self.loadButton.setEnabled(False)
-
-    def play_button(self):
-        pass
-
-    def cancel_button(self):
-        global num_players
-        num_players = 0
-        players[:] = []
+    def reset(self):
         self.playersOutput.clear()
         self.usernameInput.clear()
         self.loadButton.setEnabled(True)
         self.guestButton.setEnabled(True)
         self.playButton.setEnabled(False)
+
+    def help_button(self):
+        QMessageBox.information(self, 'Help',
+                                'TODO')
+
+    def cancel_button(self):
+        players[:] = []
+        self.reset()
         self.close()
 
 class ScoreboardDisplay(QMainWindow, Ui_ScoreboardDisplay):
@@ -218,78 +139,21 @@ class ScoreboardDisplay(QMainWindow, Ui_ScoreboardDisplay):
         self.setupUi(self)
         self.icon = Icon()
         self.setWindowIcon(self.icon)
-        self.helpBox = HelpBox()
         self.player1Button.setEnabled(True)
         self.player2Button.setEnabled(False)
         self.helpButton.clicked.connect(self.help_button)
-        self.player1Button.clicked.connect(self.player1_button)
-        self.player2Button.clicked.connect(self.player2_button)
-        self.quitButton.clicked.connect(self.quit_button)
-        self.num_turns = 0
+
+    def reset_buttons(self):
+        self.player1Button.setEnabled(True)
+        self.player2Button.setEnabled(False)
+
+    def reset_text(self):
+        self.player1UsernameOutput.clear()
+        self.player2UsernameOutput.clear()
 
     def help_button(self):
-        self.helpBox.setText('TODO')
-        self.helpBox.exec()
-
-    def player1_button(self):
-        self.num_turns += 1
-        # Send look message
-        client.send(constants.LOOK_MSG.encode())
-        # Disable button to wait for event
-        self.player1Button.setEnabled(False)
-        QApplication.processEvents()
-        # Wait on location message
-        data = client.recv(constants.BUFFER_SIZE)
-        # Deserialize data from socket
-        constants.MSG = pickle.loads(data)
-        number = constants.MSG["number"]
-        ring = constants.MSG["ring"]
-        # Update score
-        score = game.update(player=0, number=number, ring=ring)
-        self.player1Score.display(score)
-        # Update player statistics
-        players[0].inc_num_throws()
-        players[0].update_number(number)
-        players[0].update_ring(ring)
-        # Switch player
-        if len(players) > 1 and self.num_turns == game.get_num_turns():
-            self.num_turns = 0
-            self.player1Button.setEnabled(False)
-            self.player2Button.setEnabled(True)
-        else:
-            self.player1Button.setEnabled(True)
-
-    def player2_button(self):
-        self.num_turns += 1
-        # Send look message
-        client.send(constants.LOOK_MSG.encode())
-        # Disable button to wait for event
-        self.player2Button.setEnabled(False)
-        QApplication.processEvents()
-        # Wait on location message
-        data = client.recv(constants.BUFFER_SIZE)
-        # Deserialize data from socket
-        constants.MSG = pickle.loads(data)
-        number = constants.MSG["number"]
-        ring = constants.MSG["ring"]
-        # Update score
-        score = game.update(player=1, number=number, ring=ring)
-        self.player2Score.display(score)
-        # Update player statistics
-        players[1].inc_num_throws()
-        players[1].update_number(number)
-        players[1].update_ring(ring)
-        # Switch player
-        if self.num_turns == game.get_num_turns():
-            self.num_turns = 0
-            self.player2Button.setEnabled(False)
-            self.player1Button.setEnabled(True)
-        else:
-            self.player2Button.setEnabled(True)
-
-    def quit_button(self):
-        pass
-        # self.close()
+        QMessageBox.information(self, 'Help',
+                                'Select player prior to throwing')
 
 class UserInterface():
     def __init__(self):
@@ -307,30 +171,93 @@ class UserInterface():
         self.second.selectGameButton.clicked.connect(self.fourth.show)
         self.second.cancelButton.clicked.connect(self.first.show)
 
-        self.third.uploadButton.clicked.connect(self.second.show)
+        self.third.uploadButton.clicked.connect(self.upload_button)
         self.third.cancelButton.clicked.connect(self.second.show)
 
-        self.fourth.selectPlayersButton.clicked.connect(self.fifth.show)
+        self.fourth.selectPlayersButton.clicked.connect(self.select_players_button)
         self.fourth.cancelButton.clicked.connect(self.second.show)
 
+        self.fifth.loadButton.clicked.connect(self.load_button)
+        self.fifth.guestButton.clicked.connect(self.guest_button)
         self.fifth.playButton.clicked.connect(self.play_button)
         self.fifth.cancelButton.clicked.connect(self.fourth.show)
 
-        # self.sixth.quitButton.clicked.connect(self.second.show)
+        self.sixth.player1Button.clicked.connect(self.player1_button)
+        self.sixth.player2Button.clicked.connect(self.player2_button)
+        self.sixth.quitButton.clicked.connect(self.quit_button)
 
         self.first.show()
 
+        self.num_turns = 0
+
+    def upload_button(self):
+        name = self.third.nameInput.toPlainText()
+        username = self.third.usernameInput.toPlainText()
+        if name == '' and username == '':
+            QMessageBox.critical(self.third, 'Upload Error',
+                                 'Name and username are blank')
+        else:
+            database.insert_player((name, username))
+            QMessageBox.information(self.third, 'Upload', # TODO : Better vergabe
+                                    'Upload Successful')
+            self.third.close()
+            self.second.show()
+        self.third.nameInput.clear()
+        self.third.usernameInput.clear()
+
+    def select_players_button(self):
+        global game
+        if self.fourth.gameBox.currentText() == '501':
+            game = Game501()
+        elif self.fourth.gameBox.currentText() == 'Around the World':
+            game = GameAroundTheWorld()
+        else:
+            pass
+        self.fourth.close()
+        self.fifth.show()
+
+    def load_button(self):
+        username = self.fifth.usernameInput.toPlainText()
+        player = database.select_player(username)
+        # Load profile if valid username
+        if username == '' or len(player) == 0:
+            QMessageBox.critical(self.fifth, 'Help', # TODO : Better title
+                                 'Username not valid')
+            self.fifth.usernameInput.clear()
+        else:
+            players.append(Player(id=player[0][0],
+                                  name=player[0][1], username=player[0][2],
+                                  num_throws=player[0][3], num_games=player[0][4], num_wins=player[0][5]))
+            output = 'Player ' + str(len(players)) + ': ' + players[len(players) - 1].get_username() + '\n'
+            self.fifth.playersOutput.insertPlainText(output)
+            self.fifth.usernameInput.clear()
+            self.fifth.playButton.setEnabled(True)
+            # Disable buttons if max number of players
+            if len(players) == game.get_num_players():
+                self.fifth.loadButton.setEnabled(False)
+                self.fifth.guestButton.setEnabled(False)
+
+    def guest_button(self):
+        players.append(Player())
+        output = 'Player ' + str(len(players)) + ': ' + players[len(players) - 1].get_username() + '\n'
+        self.fifth.playersOutput.insertPlainText(output)
+        self.fifth.playButton.setEnabled(True)
+        # Disable buttons if max number of players
+        if len(players) == game.get_num_players():
+            self.fifth.guestButton.setEnabled(False)
+            self.fifth.loadButton.setEnabled(False)
+
     def play_button(self):
+        for i in range(len(players)):
+            players[i].inc_num_games()
         # Connect to imaging system
         connect()
         # Wait for READY message
-        msg_box = QMessageBox(text='Waiting to connect...')
-        msg_box.show()
-        # TODO : pop-up dialog indicating system is waiting
+        self.fifth.close()
+        QMessageBox.information(self.fifth, 'dd', # TODO : Label correctly
+                                'Connecting to imaging system...')
         data = client.recv(constants.BUFFER_SIZE).decode()
         if data == constants.READY_MSG:
-            del msg_box
-            self.fifth.close()
             self.sixth.show()
             self.sixth.setWindowTitle(game.get_name())
             # Load players
@@ -344,11 +271,134 @@ class UserInterface():
                 else:
                     pass
 
+    def player_button(self, player):
+        self.num_turns += 1
+        # Send look message
+        client.send(constants.LOOK_MSG.encode())
+        # Disable button to wait for event
+        if player == 0:
+            self.sixth.player1Button.setEnabled(False)
+        elif player == 1:
+            self.sixth.player2Button.setEnabled(False)
+        else:
+            pass
+        QApplication.processEvents()
+        # Wait on location message
+        data = client.recv(constants.BUFFER_SIZE)
+        # Deserialize data from socket
+        constants.MSG = pickle.loads(data)
+        number = constants.MSG["number"]
+        ring = constants.MSG["ring"]
+        # Update score
+        score = game.update(player=player, number=number, ring=ring)
+        if player == 0:
+            self.sixth.player1Score.display(score)
+        elif player == 1:
+            self.sixth.player2Score.display(score)
+        else:
+            pass
+        # Update player statistics
+        players[player].inc_num_throws()
+        players[player].update_number(number)
+        players[player].update_ring(ring)
+        # Check winner
+        if game.get_winner(player=player) == True:
+            players[player].inc_num_wins()
+            update_records()
+            reply = QMessageBox.question(self.sixth,
+                                         'Player ' + str(player + 1) + ' wins!',
+                                         'Play again?',
+                                         QMessageBox.StandardButton.Yes |
+                                         QMessageBox.StandardButton.No)
+            if reply == QMessageBox.StandardButton.Yes:
+                # Reset game
+                game.reset()
+                for i in range(len(players)):
+                    players[i].reset()
+                    if i == 0:
+                        self.sixth.player1Score.display(game.get_score(player=0))
+                    elif i == 1:
+                        self.sixth.player2Score.display(game.get_score(player=1))
+                    else:
+                        pass
+                self.sixth.reset_buttons()
+                self.num_turns = 0
+            else:
+                # Reset
+                players[:] = []
+                # Disconnect from imaging system
+                disconnect()
+                self.sixth.reset_buttons()
+                self.sixth.reset_text()
+                self.sixth.close()
+                self.first.show()
+        # Switch player
+        else:
+            if len(players) > 1 and self.num_turns == game.get_num_turns():
+                self.num_turns = 0
+                if player == 0:
+                    self.sixth.player1Button.setEnabled(False)
+                    self.sixth.player2Button.setEnabled(True)
+                elif player == 1:
+                    self.sixth.player1Button.setEnabled(True)
+                    self.sixth.player2Button.setEnabled(False)
+                else:
+                    pass
+            else:
+                if player == 0:
+                    self.sixth.player1Button.setEnabled(True)
+                elif player == 1:
+                    self.sixth.player2Button.setEnabled(True)
+                else:
+                    pass
+
+    def player1_button(self):
+        self.player_button(player=0)
+
+    def player2_button(self):
+        self.player_button(player=1)
+
+    def quit_button(self):
+        update_records()
+        # Reset
+        global game
+        game = None
+        players[:] = []
+        disconnect()
+        self.sixth.reset_buttons()
+        self.sixth.reset_text()
+        self.sixth.close()
+        self.first.show()
+
 def connect():
     global client
     client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server_address = (constants.IP_ADDRESS, constants.PORT)
     client.connect(server_address)
+
+def disconnect():
+    client.send(constants.DONE_MSG.encode())
+    client.close()
+
+def update_records():
+    date = datetime.today().strftime('%Y-%m-%d %H:%M:%S')
+    for i in range(len(players)):
+        player_id = players[i].get_id()
+        if player_id != 0:
+            # Update number record table
+            number_hits = players[i].get_number_hits()
+            number_record = (date, player_id, game.get_id(), *number_hits)
+            database.insert_number_record(number_record)
+            # Update ring record table
+            ring_hits = players[i].get_ring_hits()
+            ring_record = (date, player_id, game.get_id(), *ring_hits)
+            database.insert_ring_record(ring_record)
+            # Update player table (throws, games, wins, id)
+            num_throws = players[i].get_num_throws()
+            num_games = players[i].get_num_games()
+            num_wins = players[i].get_num_wins()
+            player = (num_throws, num_games, num_wins, player_id)
+            database.update_player(player)
 
 if __name__ == "__main__":
     QApplication.setAttribute(Qt.AA_EnableHighDpiScaling, True)

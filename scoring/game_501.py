@@ -22,6 +22,9 @@ class Game501():
     def get_name(self):
         return '501'
 
+    def get_id(self):
+        return 1
+
     def get_num_turns(self):
         return 3
 
