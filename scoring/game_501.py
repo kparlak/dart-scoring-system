@@ -19,6 +19,12 @@ class Game501():
         self.score = arr.array('i', [501, 501])
         self.winner = arr.array('b', [False, False])
 
+    def get_name(self):
+        return '501'
+
+    def get_id(self):
+        return 1
+
     def get_num_turns(self):
         return 3
 

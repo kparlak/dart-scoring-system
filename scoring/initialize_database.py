@@ -11,7 +11,7 @@
 
 from database import Database
 
-database = Database('DARTS.db')
+database = Database('/data/DARTS.db')
 
 # Create tables
 database.create_table(database.players_table)

@@ -22,14 +22,76 @@
         ```
         sudo pip install pyqt5-tools
         ```
-    - Database Browser - [sqlitebrowser](https://snapcraft.io/install/sqlitebrowser/raspbian)
+    - Utility installer [snapd](https://snapcraft.io/snapd)
         ```
         sudo apt update
         sudo apt install snapd
         sudo reboot
+        ```
+        ```
         sudo snap install core
+        ```
+    - Text Editor - [gedit](https://snapcraft.io/gedit)
+        ```
+        sudo snap install gedit
+        ```
+    - Database Browser - [Install sqlitebrowser on Raspberry Pi](https://snapcraft.io/install/sqlitebrowser/raspbian)
+        ```
         sudo snap install sqlitebrowser
         ```
+    - On-Screen Keyboard - [Setting up an On-Screen Keyboard on Raspberry Pi](https://pimylifeup.com/raspberry-pi-on-screen-keyboard/)
+        - Install keyboard
+            ```
+            sudo apt install matchbox-keyboard
+            ```
+        - Change default keyboard layout
+            ```
+            mkdir ~/.matchbox
+            sudo cp /usr/share/matchbox-keyboard/keyboard-lq1.xml ~/.matchbox/keyboard.xml
+            ```
+        - Create execution script
+            ```
+            sudo nano /usr/bin/toggle-keyboard.sh
+            ```
+            ```
+            #!/bin/bash
+            PID="$(pidof matchbox-keyboard)"
+            if [  "$PID" != ""  ]; then
+              kill $PID
+            else
+             matchbox-keyboard &
+            fi
+            ```
+            ```
+            sudo chmod +x /usr/bin/toggle-keyboard.sh
+            ```
+        - Create desktop script
+            ```
+            sudo nano /usr/share/raspi-ui-overrides/applications/toggle-keyboard.desktop
+            ```
+            ```
+            [Desktop Entry]
+            Name=Toggle Virtual Keyboard
+            Comment=Toggle Virtual Keyboard
+            Exec=/usr/bin/toggle-keyboard.sh
+            Type=Application
+            Icon=matchbox-keyboard.png
+            Categories=Panel;Utility;MB
+            X-MB-INPUT-MECHANISM=True
+            ```
+        - Add to toolbar
+            ```
+            cp /etc/xdg/lxpanel/LXDE-pi/panels/panel /home/pi/.config/lxpanel/LXDE-pi/panels/panel
+            nano /home/pi/.config/lxpanel/LXDE-pi/panels/panel
+            Plugin {
+              type=launchbar
+              Config {
+                Button {
+                  id=toggle-keyboard.desktop
+                }
+              }
+            }
+            ```
 - Set IP addresses
     - Configure DHCP to home network using onboard Wi-Fi
     - Set local Ethernet to static IP address
@@ -53,13 +115,17 @@
 ## Execution
 
 ### Application
-- Generate python files from Qt ui files
+- Generate Python files from Qt ui files
     ```
     python -m PyQt5.uic.pyuic <file.ui> -o <file.py> -x
     ```
-- Start state machine
+- Start command-line application
     ```
     ./main_scoring.py
+    ```
+- Start GUI application
+    ```
+    ./main_scoring_gui.py
     ```
 
 ## License
