@@ -152,7 +152,8 @@ class ScoreboardDisplay(QMainWindow, Ui_ScoreboardDisplay):
         self.quitButton.clicked.connect(self.quit_button)
 
     def draw_hit(self, player, radius, theta):
-        self.painter = QPainter(self.dartboardLabel.pixmap())
+        pixmap = self.canvas.copy()
+        self.painter = QPainter(pixmap)
         if player == 0: # Black
             self.painter.setBrush(QBrush(QColor('#000000'), Qt.BrushStyle.SolidPattern))
         elif player == 1: # Red
@@ -170,12 +171,15 @@ class ScoreboardDisplay(QMainWindow, Ui_ScoreboardDisplay):
         loc_y = int(center_y - dist_y - (point / 2))
         self.painter.drawEllipse(loc_x, loc_y, point, point)
         self.painter.end()
+        self.dartboardLabel.setPixmap(pixmap)
+        self.canvas = pixmap
 
     def help_button(self):
         QMessageBox.information(self, 'Help',
                                 'Select player prior to throwing')
 
     def quit_button(self):
+        self.canvas = QPixmap("ui/Dartboard_Grayscale_Resized.png")
         self.dartboardLabel.setPixmap(self.canvas)
         self.player1Button.setEnabled(True)
         self.player2Button.setEnabled(False)
