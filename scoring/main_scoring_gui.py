@@ -161,6 +161,9 @@ class ScoreboardDisplay(QMainWindow, Ui_ScoreboardDisplay):
         center_x = 150
         center_y = 150
         sf = 300 / 450
+        theta += 90
+        if theta > 360:
+            theta -= 360
         dist_x = radius * math.cos(math.radians(theta)) * sf
         dist_y = radius * math.sin(math.radians(theta)) * sf
         loc_x = int(center_x + dist_x - (point / 2))
