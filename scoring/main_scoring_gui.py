@@ -13,13 +13,14 @@ import sys
 sys.path.append('..')
 import socket
 import pickle
+import math
 from datetime import datetime
 
 import constants
 
 from PyQt5.QtWidgets import QApplication, QMainWindow, QMessageBox
-from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QIcon, QPixmap, QMovie
+from PyQt5.QtCore import *
+from PyQt5.QtGui import *
 
 from ui.idle_start_display import Ui_IdleStartDisplay
 from ui.start_display import Ui_StartDisplay
@@ -144,15 +145,35 @@ class ScoreboardDisplay(QMainWindow, Ui_ScoreboardDisplay):
         self.setupUi(self)
         self.icon = Icon()
         self.setWindowIcon(self.icon)
+        self.canvas = QPixmap("ui/Dartboard_Grayscale_Resized.png")
+        self.dartboardLabel.setPixmap(self.canvas)
         self.player2Button.setEnabled(False)
         self.helpButton.clicked.connect(self.help_button)
         self.quitButton.clicked.connect(self.quit_button)
+
+    def draw_hit(self, player, radius, theta):
+        self.painter = QPainter(self.dartboardLabel.pixmap())
+        if player == 0: # Black
+            self.painter.setBrush(QBrush(QColor('#000000'), Qt.BrushStyle.SolidPattern))
+        elif player == 1: # Red
+            self.painter.setBrush(QBrush(QColor('#ff0000'), Qt.BrushStyle.SolidPattern))
+        point = 4
+        center_x = 150
+        center_y = 150
+        sf = 300 / 450
+        dist_x = radius * math.cos(math.radians(theta)) * sf
+        dist_y = radius * math.sin(math.radians(theta)) * sf
+        loc_x = int(center_x + dist_x - (point / 2))
+        loc_y = int(center_y - dist_y - (point / 2))
+        self.painter.drawEllipse(loc_x, loc_y, point, point)
+        self.painter.end()
 
     def help_button(self):
         QMessageBox.information(self, 'Help',
                                 'Select player prior to throwing')
 
     def quit_button(self):
+        self.dartboardLabel.setPixmap(self.canvas)
         self.player1Button.setEnabled(True)
         self.player2Button.setEnabled(False)
         self.player1UsernameOutput.clear()
@@ -287,6 +308,10 @@ class UserInterface():
         constants.MSG = pickle.loads(data)
         number = constants.MSG["number"]
         ring = constants.MSG["ring"]
+        radius = constants.MSG["radius"]
+        theta = constants.MSG["theta"]
+        # Draw hit
+        self.sixth.draw_hit(player=player, radius=radius, theta=theta)
         # Update score
         score = game.update(player=player, number=number, ring=ring)
         if player == 0:
@@ -302,6 +327,7 @@ class UserInterface():
             players[player].inc_num_wins()
             update_records()
             self.num_turns = 0
+            self.sixth.dartboardLabel.setPixmap(self.sixth.canvas)
             self.sixth.player1Button.setEnabled(True)
             self.sixth.player2Button.setEnabled(False)
             reply = QMessageBox.question(self.sixth,

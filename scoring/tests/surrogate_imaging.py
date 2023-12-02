@@ -24,7 +24,6 @@ while True:
     server.listen(constants.NUM_CONNECTIONS)
     print("Waiting for connection...")
     client, address = server.accept()
-
     client.send(constants.READY_MSG.encode())
     print("Sent READY message")
 
@@ -36,6 +35,10 @@ while True:
             constants.MSG["number"] = number
             ring = input('Ring of hit: ')
             constants.MSG["ring"] = ring
+            radius = float(input('Radius of hit: '))
+            constants.MSG["radius"] = radius
+            theta = float(input('Theta of hit: '))
+            constants.MSG["theta"] = theta
             data = pickle.dumps(constants.MSG, protocol=2)
             client.sendall(data)
             print("Sent LOCATION message")
