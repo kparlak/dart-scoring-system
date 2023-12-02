@@ -148,8 +148,6 @@ class ScoreboardDisplay(QMainWindow, Ui_ScoreboardDisplay):
         self.canvas = QPixmap("ui/Dartboard_Grayscale_Resized.png")
         self.dartboardLabel.setPixmap(self.canvas)
         self.player2Button.setEnabled(False)
-        self.player1Button.setStyleSheet('QPushButton {background-color: #000000; color: white;}')
-        self.player2Button.setStyleSheet('QPushButton {background-color: #ff0000; color: black;}')
         self.helpButton.clicked.connect(self.help_button)
         self.quitButton.clicked.connect(self.quit_button)
 
