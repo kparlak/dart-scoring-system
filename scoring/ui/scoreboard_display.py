@@ -68,6 +68,10 @@ class Ui_ScoreboardDisplay(object):
         self.player2Score.setSmallDecimalPoint(False)
         self.player2Score.setDigitCount(3)
         self.player2Score.setObjectName("player2Score")
+        self.dartboardLabel = QtWidgets.QLabel(self.centralwidget)
+        self.dartboardLabel.setGeometry(QtCore.QRect(250, 20, 300, 300))
+        self.dartboardLabel.setText("")
+        self.dartboardLabel.setObjectName("dartboardLabel")
         ScoreboardDisplay.setCentralWidget(self.centralwidget)
 
         self.retranslateUi(ScoreboardDisplay)
@@ -81,13 +85,3 @@ class Ui_ScoreboardDisplay(object):
         self.player2Button.setText(_translate("ScoreboardDisplay", "Player 2"))
         self.player1Label.setText(_translate("ScoreboardDisplay", "Player:"))
         self.player2Label.setText(_translate("ScoreboardDisplay", "Player:"))
-
-
-if __name__ == "__main__":
-    import sys
-    app = QtWidgets.QApplication(sys.argv)
-    ScoreboardDisplay = QtWidgets.QMainWindow()
-    ui = Ui_ScoreboardDisplay()
-    ui.setupUi(ScoreboardDisplay)
-    ScoreboardDisplay.show()
-    sys.exit(app.exec_())
