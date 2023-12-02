@@ -384,6 +384,7 @@ class UserInterface():
         self.player_button(player=1)
 
     def quit_button(self):
+        self.num_turns = 0
         update_records()
         # Reset
         global game
