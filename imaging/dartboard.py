@@ -158,8 +158,8 @@ class Dartboard:
         # Update number and ring hit
         number = self.update_number(self.dist_x, self.dist_y)
         ring = self.update_ring(self.dist_x, self.dist_y)
-        # Void number if hit is outside dartboard
-        if ring == 'Z':
+        # Void number if hit is outside dartboard, bull, or bullseye
+        if ring == 'Z' or ring == 'X' or ring == 'Y':
             number = 0
         return number, ring
 
