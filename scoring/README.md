@@ -22,7 +22,11 @@
         ```
         sudo pip install pyqt5-tools
         ```
-    - Utility installer [snapd](https://snapcraft.io/snapd)
+    - Python package - [uwsgi](https://uwsgi-docs.readthedocs.io/en/latest/Install.html)
+        ```
+        sudo pip install uwsgi
+        ```
+    - Utility installer - [snapd](https://snapcraft.io/snapd)
         ```
         sudo apt update
         sudo apt install snapd
@@ -114,10 +118,15 @@
 
 ## Execution
 
-### Application
+### Tools
 - Generate Python files from Qt ui files
     ```
     python -m PyQt5.uic.pyuic <file.ui> -o <file.py> -x
+    ```
+### Application
+- Start web server
+    ```
+    uwsgi --http <DHCP Address>:9999 --wsgi-file handler.py
     ```
 - Start command-line application
     ```
